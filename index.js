@@ -1,6 +1,23 @@
-var http = require('http');
-http.createServer(function (req, res) {
-    console.log(`Just got a request at ${req.url}!`)
-    res.write('Yo!');
-    res.end();
-}).listen(process.env.PORT || 3000);
+const { createServer } = require("http");
+const { Server } = require("socket.io");
+
+const port = process.env.PORT || 3000
+const httpServer = createServer();
+const io = new Server(httpServer, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log(socket.id+" joined server")
+  
+  socket.on("disconnect", msg => {
+    console.log(socket.id+" left server")
+  })
+});
+
+httpServer.listen(port);
+console.log("Listening on: "+port)
