@@ -1,22 +1,51 @@
-const { createServer } = require("http");
-const { Server } = require("socket.io");
+const { WebSocketServer } = require('ws')
+const crypto = require("crypto")
 
 const port = process.env.PORT || 3000
-const httpServer = createServer();
-const io = new Server(httpServer, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
+const wss = new WebSocketServer({ port: port })
 
-io.on("connection", (socket) => {
-  console.log(socket.id+" joined server")
-  
-  socket.on("disconnect", msg => {
-    console.log(socket.id+" left server")
+wss.on('connection', ws => {
+  ws.isAlive = true
+  ws.id = crypto.randomBytes(9).toString("hex")
+
+  ws.on('error', console.error)
+
+  ws.on('message', data => {
+    if(data == "ping"){
+      ws.isAlive = true
+      return
+    }
+    console.log('received: %s', data)
+    wss.clients.forEach(_ws => {
+      if(ws.id == _ws.id) return
+      _ws.send(data)
+    })
   })
+
+  ws.on("close", function() {
+    wss.clients.forEach(_ws => {
+      _ws.send(JSON.stringify({ left: ws.id }))
+    })
+  });
+
+  wss.clients.forEach(_ws => {
+    if(ws.id == _ws.id) ws.send(JSON.stringify({ main: _ws.id }))
+    else _ws.send(JSON.stringify({ reqpos: _ws.id }))
+  })
+})
+
+const interval = setInterval(() => {
+  wss.clients.forEach(ws => {
+    if (ws.isAlive === false){
+      console.log(ws.id, "left the game")
+      return ws.terminate()
+    }
+    ws.isAlive = false
+  })
+}, 30000)
+
+wss.on('close', () => {
+  clearInterval(interval);
 });
 
-httpServer.listen(port);
-console.log("Listening on: "+port)
+console.log("Listen on:", port)
