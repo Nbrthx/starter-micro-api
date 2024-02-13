@@ -1,10 +1,11 @@
 const { WebSocketServer } = require('ws')
 const crypto = require("crypto")
+const { createServer } = require("http")
 
-const port = process.env.PORT || 3000
-const wss = new WebSocketServer({ port: port })
+const server = createServer()
+const wss = new WebSocketServer({ server })
 
-wss.on('connection', ws => {
+wss.on('connection', function connection(ws) {
   ws.isAlive = true
   ws.id = crypto.randomBytes(9).toString("hex")
 
@@ -15,6 +16,7 @@ wss.on('connection', ws => {
       ws.isAlive = true
       return
     }
+    if(data == "getping") ws.send(data)
     console.log('received: %s', data)
     wss.clients.forEach(_ws => {
       if(ws.id == _ws.id) return
@@ -48,4 +50,5 @@ wss.on('close', () => {
   clearInterval(interval);
 });
 
-console.log("Listen on:", port)
+server.listen(3000)
+console.log("Listen on:", 3000)
