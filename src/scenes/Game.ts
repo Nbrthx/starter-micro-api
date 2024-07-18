@@ -1,6 +1,5 @@
 import { Scene } from 'phaser';
 import { Player } from '../prefabs/Player';
-import geckos from '@geckos.io/client';
 
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -25,7 +24,6 @@ export class Game extends Scene {
         this.layer1 = map.createLayer('background', tileset, 0, 0)?.setScale(5) as Phaser.Tilemaps.TilemapLayer;
         this.layer2 = map.createLayer('wall', tileset, 0, 0)?.setScale(5).setCollisionByExclusion([-1]) as Phaser.Tilemaps.TilemapLayer;
         this.layer3 = map.getObjectLayer('wall2') as Phaser.Tilemaps.ObjectLayer;
-        tileset.image?.setFilter(Phaser.Textures.NEAREST);
 
         const collider = []
         collider.push(this.layer2)

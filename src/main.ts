@@ -17,6 +17,11 @@ const config: Types.Core.GameConfig = {
     fps: {
         target: 60
     },
+    pixelArt: true,
+    scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH
+    },
     physics: {
         default: 'arcade',
         arcade: {

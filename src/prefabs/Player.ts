@@ -11,7 +11,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
         this.setScale(5)
-        this.texture.setFilter(Phaser.Textures.NEAREST)
         this.setBodySize(10, 10)
         this.setOffset(3, 6)
 
