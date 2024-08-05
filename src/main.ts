@@ -6,7 +6,7 @@ import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
 
-// 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
+// r76bdqSTOHmTKDAaRWrwfrtMzJ3i343Qo5b@
 
 import { Game, Types } from "phaser";
 
