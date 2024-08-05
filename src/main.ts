@@ -6,8 +6,6 @@ import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
 
-// r76bdqSTOHmTKDAaRWrwfrtMzJ3i343Qo5b@
-
 import { Game, Types } from "phaser";
 
 const width = screen.width>screen.height?screen.width/screen.height:screen.height/screen.width
