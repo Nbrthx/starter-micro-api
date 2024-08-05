@@ -2,7 +2,6 @@ import { Scene } from 'phaser';
 import { Player } from '../prefabs/Player';
 import { Socket } from 'socket.io-client';
 import { Joystick } from '../components/Joystick';
-import { Enemy } from '../prefabs/Enemy';
 import { Network } from '../components/Network';
 
 interface PlayerData{
@@ -29,7 +28,6 @@ export class Game extends Scene {
     map: string;
     player2: Player;
     joystick: Joystick;
-    enemy: Enemy;
     weaponHitbox: Phaser.GameObjects.Group;
     collider: any;
     network: Network;
@@ -67,9 +65,6 @@ export class Game extends Scene {
         this.enterance.setVisible(false)
         this.enterance.setSize(4, 64)
 
-        // Enemy
-        this.enemy = new Enemy(this, coor(10), coor(8), 'char')
-
         // Quest
 
 
@@ -78,7 +73,7 @@ export class Game extends Scene {
         const stick = document.getElementById('stick');
         const attack = document.getElementById('attack');
 
-        if(joystick && stick) this.joystick = new Joystick(this, joystick, stick);
+        if(joystick && stick) this.joystick = new Joystick(joystick, stick);
         attack?.addEventListener('click', () => {
             this.socket.emit('attack', {
                 map: 'lobby',

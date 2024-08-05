@@ -16,6 +16,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     heart: number;
     damaged: boolean;
     attacking: boolean;
+    targetPos: Phaser.Math.Vector2;
 
     constructor(scene: Phaser.Scene, x: number, y: number, char: string, main: boolean) {
         super(scene, x, y, char);
@@ -40,6 +41,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.weapon.setOrigin(0.4, 0.5)
 
         this.weaponHitbox = new Hitbox(this.scene, this, 0, 0, 'circle', 12)
+
+        this.targetPos = new Phaser.Math.Vector2(0, 0)
 
         this.attacking = false
         this.damaged = false
@@ -73,7 +76,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.weapon.visible = true;
         this.weapon.play('attack', true)
-        this.weapon.rotation = Phaser.Math.Angle.Between(0, 0, this.lastDir.x, this.lastDir.y)
+        if(this.targetPos.x != 0 || this.targetPos.y != 0) this.weapon.rotation = Phaser.Math.Angle.Between(this.x, this.y, this.targetPos.x, this.targetPos.y)
+        else this.weapon.rotation = Phaser.Math.Angle.Between(0, 0, this.lastDir.x, this.lastDir.y)
         let dirX = Math.cos(this.weapon.rotation)*14
         let dirY = Math.sin(this.weapon.rotation)*14
 

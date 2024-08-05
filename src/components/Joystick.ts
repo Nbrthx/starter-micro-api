@@ -1,9 +1,5 @@
-import { Game as Lobby } from "../scenes/Lobby";
-import { Game as Hamemayu } from "../scenes/Hamemayu";
-
 export class Joystick{
 
-    scene: Lobby | Hamemayu;
     joystick: HTMLElement;
     stick: HTMLElement;
 
@@ -15,8 +11,7 @@ export class Joystick{
     isDragging: boolean;
     activeTouch: [];
 
-    constructor(scene: Lobby | Hamemayu, joystick: HTMLElement, stick: HTMLElement){
-        this.scene = scene
+    constructor(joystick: HTMLElement, stick: HTMLElement){
         this.joystick = joystick
         this.stick = stick
 

@@ -2,7 +2,6 @@ import { Scene } from 'phaser';
 import { Player } from '../prefabs/Player';
 import { Socket } from 'socket.io-client';
 import { Joystick } from '../components/Joystick';
-import { Enemy } from '../prefabs/Enemy';
 import { Network } from '../components/Network';
 
 interface PlayerData{
@@ -97,7 +96,7 @@ export class Game extends Scene {
         const stick = document.getElementById('stick');
         this.attack = document.getElementById('attack');
 
-        if(joystick && stick) this.joystick = new Joystick(this, joystick, stick);
+        if(joystick && stick) this.joystick = new Joystick(joystick, stick);
         this.attackEvent = () => {
             this.socket.emit('attack', {
                 map: this.map,
@@ -157,7 +156,7 @@ export class Game extends Scene {
     }
 
     addPlayer(player: PlayerData, main: boolean = false){
-        if(main && !this.player || !this.player.active){
+        if(main && (!this.player || !this.player.active)){
             // Player
             this.player = new Player(this, player.x, player.y, 'char', true)
                     

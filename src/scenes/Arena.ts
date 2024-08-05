@@ -118,7 +118,7 @@ export class Game extends Scene {
         const stick = document.getElementById('stick');
         this.attack = document.getElementById('attack');
 
-        if(joystick && stick) this.joystick = new Joystick(this, joystick, stick);
+        if(joystick && stick) this.joystick = new Joystick(joystick, stick);
         this.attackEvent = () => {
             this.socket.emit('attack', {
                 map: 'arena',
@@ -162,13 +162,15 @@ export class Game extends Scene {
         } else {
             this.player.dir.y = this.joystick.y
         }
-        
+     
         this.player.update()
         this.enemy.track(this.player)
         this.enemy.update()
+        this.player.targetPos.x = this.enemy.x
+        this.player.targetPos.y = this.enemy.y
     }
 
-    addPlayer(_player: PlayerData, main: boolean = false){
+    addPlayer(_player: PlayerData, _main: boolean = false){
         //
     }
 
