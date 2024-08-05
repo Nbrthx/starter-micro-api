@@ -1,5 +1,7 @@
 import { Boot } from './scenes/Boot';
-import { Game as MainGame } from './scenes/Game';
+import { Game as Lobby } from './scenes/Lobby';
+import { Game as Hamemayu } from './scenes/Hamemayu';
+import { Game as Arena } from './scenes/Arena';
 import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
 import { Preloader } from './scenes/Preloader';
@@ -32,7 +34,9 @@ const config: Types.Core.GameConfig = {
         Boot,
         Preloader,
         MainMenu,
-        MainGame,
+        Lobby,
+        Hamemayu,
+        Arena,
         GameOver
     ]
 };

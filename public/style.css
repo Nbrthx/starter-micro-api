@@ -13,3 +13,40 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+#game-ui {
+    position: absolute;
+    left: 0;
+    top: 0;
+    /* display: none; */
+}
+
+#joystick {
+    position: absolute;
+    top: calc(100svh - 32vh);
+    left: 80px;
+    width: 24vh;
+    height: 24vh;
+    background-color: #ccc;
+    border-radius: 50%;
+}
+
+#stick {
+    position: absolute;
+    top: calc(50% - 6vh);
+    left: calc(50% - 6vh);
+    width: 12vh;
+    height: 12vh;
+    background-color: #aaa;
+    border-radius: 50%;
+}
+
+#attack {
+    position: absolute;
+    top: calc(100svh - 32vh);
+    left: calc(100vw - 24vh - 180px);
+    width: 24vh;
+    height: 24vh;
+    background-color: #ccc;
+    border-radius: 50%;
+}

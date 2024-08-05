@@ -1,4 +1,7 @@
 import { Scene, GameObjects } from 'phaser';
+import io from 'socket.io-client'
+
+const socket = io('https://3000-idx-mygame-1719896715970.cluster-a3grjzek65cxex762e4mwrzl46.cloudworkstations.dev/', { transports: ['websocket'] })
 
 export class MainMenu extends Scene
 {
@@ -6,13 +9,11 @@ export class MainMenu extends Scene
     logo: GameObjects.Image;
     title: GameObjects.Text;
 
-    constructor ()
-    {
+    constructor () {
         super('MainMenu');
     }
 
-    create ()
-    {
+    create () {
         this.cameras.main.setBackgroundColor('#444499');
 
         this.background = this.add.image(this.scale.width/2, this.scale.height/2, 'background');
@@ -26,11 +27,14 @@ export class MainMenu extends Scene
             align: 'center'
         }).setOrigin(0.5);
 
+        
+        this.registry.set('socket', socket)
         this.title.setInteractive()
         this.title.once('pointerdown', () => {
 
-            this.scene.start('Game');
+            this.scene.start('Lobby');
 
         });
+        console.log('connected')
     }
 }
