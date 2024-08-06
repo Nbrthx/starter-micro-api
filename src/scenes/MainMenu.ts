@@ -1,7 +1,7 @@
 import { Scene, GameObjects } from 'phaser';
 import io from 'socket.io-client'
 
-const socket = io('https://3000-idx-mygame-1719896715970.cluster-a3grjzek65cxex762e4mwrzl46.cloudworkstations.dev/', { transports: ['websocket'] })
+const socket = io('https://3000-nbrthx-startermicroapi-x83qmc2m03h.ws-us115.gitpod.io/', { transports: ['websocket'] })
 
 export class MainMenu extends Scene
 {

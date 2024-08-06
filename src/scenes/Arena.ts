@@ -94,6 +94,16 @@ export class Game extends Scene {
             if(!this.player.damaged){
                 this.player.damaged = true
                 this.player.heart -= 5
+                
+                this.add.tween({
+                    targets: [this.player.head, this.player.outfit],
+                    duration: 50,
+                    ease: 'ease-in-out',
+                    alpha: 0,
+                    repeat: 1,
+                    yoyo: true
+                })
+
                 if(this.player.heart <= 0){
                     this.socket.removeAllListeners()
                     if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
@@ -106,6 +116,21 @@ export class Game extends Scene {
             if(!this.enemy.damaged){
                 this.enemy.damaged = true
                 this.enemy.heart -= 5
+
+                this.add.tween({
+                    targets: this.enemy,
+                    duration: 50,
+                    ease: 'ease-in-out',
+                    alpha: 0,
+                    repeat: 1,
+                    yoyo: true
+                })
+
+                if(this.enemy.heart <= 0){
+                    this.socket.removeAllListeners()
+                    if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
+                    this.scene.start('Lobby')
+                }
                 setTimeout(() => this.enemy.damaged = false, 300)
             }
         })

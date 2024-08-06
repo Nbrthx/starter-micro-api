@@ -36,9 +36,6 @@ io.on('connection', (socket) => {
 
   socket.on('join', (data) => {
     console.log('socket: '+data.id)
-    data.x = coor(8)
-    data.y = coor(8)
-
     const { map } = data
     
     if (!rooms.has(map)) {

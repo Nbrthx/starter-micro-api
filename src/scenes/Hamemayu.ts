@@ -15,6 +15,8 @@ interface PlayerData{
     chat: string;
 }
 
+const coor: Function = (x: number, xx: number = 0) => x*16+xx;
+
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
     background: Phaser.GameObjects.Image;
@@ -31,18 +33,32 @@ export class Game extends Scene {
     weaponHitbox: Phaser.GameObjects.Group;
     collider: any;
     network: Network;
-    enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody;
+    enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody[];
+    spawnPoint: (from: string) => { x: any; y: any; };
+    from: string;
+    attackEvent: EventListener;
+    attack: HTMLElement | null;
 
     constructor () {
         super('Hamemayu');
-        this.map = 'hamemayu'
+        this.map = 'lobby'
+        this.spawnPoint = (from: string) => {
+            if(from == 'lobby')
+                return { x: coor(1), y: coor(6) }
+            if(from == 'hutan')
+                return { x: coor(14), y: coor(6) }
+            else return { x: coor(8), y: coor(8) }
+        }
+        this.from = ''
+    }
+
+    init(props: { from: string }) {
+        this.from = props.from
     }
 
     create () {
         this.camera = this.cameras.main;
         this.socket = this.registry.get('socket')
-
-        const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
         // MAP
         const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'hamemayu' });
@@ -61,9 +77,14 @@ export class Game extends Scene {
         this.weaponHitbox = this.add.group()
 
         // Enterance
-        this.enterance = this.physics.add.image(coor(37), coor(17), '')
-        this.enterance.setVisible(false)
-        this.enterance.setSize(4, 64)
+        this.enterance = []
+        this.enterance.push(this.physics.add.image(coor(0), coor(6), ''))
+        this.enterance[0].setVisible(false)
+        this.enterance[0].setSize(4, 32)
+
+        this.enterance.push(this.physics.add.image(coor(15), coor(6), ''))
+        this.enterance[1].setVisible(false)
+        this.enterance[1].setSize(4, 32)
 
         // Quest
 
@@ -71,21 +92,28 @@ export class Game extends Scene {
         // Controller
         const joystick = document.getElementById('joystick');
         const stick = document.getElementById('stick');
-        const attack = document.getElementById('attack');
+        this.attack = document.getElementById('attack');
 
         if(joystick && stick) this.joystick = new Joystick(joystick, stick);
-        attack?.addEventListener('click', () => {
+        this.attackEvent = () => {
             this.socket.emit('attack', {
-                map: 'lobby',
+                map: this.map,
                 x: this.player.x,
                 y: this.player.y,
                 dir: this.player.dir
             })
-            if(this.player) this.player.attack()
-        })
+            if(this.player && !this.player.attacking) this.player.attack()
+        }
+        
+        this.attack?.addEventListener('click', this.attackEvent, true)
+
+        // Camera
+        this.camera.setZoom(5,5)
+        this.camera.setBounds(0, 0, map.width*16, map.height*16)
+        this.physics.world.setBounds(0, 0, map.width*16, map.height*16)
 
         // Connection
-        this.network = new Network(this)
+        this.network = new Network(this, this.spawnPoint(this.from).x, this.spawnPoint(this.from).y)
 
         const updatePlayer = () => {
             if(this.player){
@@ -101,6 +129,7 @@ export class Game extends Scene {
 
     update(){
         if(!this.player) return
+        if(!this.player.active) return
 
         const cursors: any = this.input.keyboard?.addKeys('W,A,S,D') as Phaser.Input.Keyboard.KeyboardManager;
         
@@ -125,9 +154,9 @@ export class Game extends Scene {
 
     addPlayer(player: PlayerData, main: boolean = false){
         console.log(player)
-        if(main && !this.player){
+        if(main && (!this.player || !this.player.active)){
             // Player
-            this.player = new Player(this, player.x, player.y, 'char', true)
+            this.player = new Player(this, this.spawnPoint(this.from).x, this.spawnPoint(this.from).y, 'char', true)
                     
             this.player.head.setTexture('green-head')
             this.player.id = player.id
@@ -137,15 +166,19 @@ export class Game extends Scene {
 
             // Camera
             this.camera.startFollow(this.player, true, 0.05, 0.05)
-            this.camera.setZoom(5,5)
-            this.camera.setBounds(0, 0, this.layer1.width, this.layer1.height)
-            this.physics.world.setBounds(0, 0, this.layer1.width, this.layer1.height)
             this.physics.add.collider(this.player, this.collider)
 
-            this.physics.add.overlap(this.enterance, this.player, (_obj1, _player) => {
+            this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
                 console.log('hdhsdas')
-                this.network.changeMap('hamemayu')
-                this.scene.start('Hamemayu')
+                this.network.changeMap('lobby')
+                if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
+                this.scene.start('Lobby', { from: 'hamemayu' })
+            })
+            this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
+                console.log('hdhsdas')
+                this.network.changeMap('hutan')
+                if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
+                this.scene.start('Hutan', { from: 'hamemayu' })
             })
         }
         else{

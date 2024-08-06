@@ -1,6 +1,7 @@
 import { Boot } from './scenes/Boot';
 import { Game as Lobby } from './scenes/Lobby';
 import { Game as Hamemayu } from './scenes/Hamemayu';
+import { Game as Hutan } from './scenes/Forest';
 import { Game as Arena } from './scenes/Arena';
 import { GameOver } from './scenes/GameOver';
 import { MainMenu } from './scenes/MainMenu';
@@ -36,6 +37,7 @@ const config: Types.Core.GameConfig = {
         MainMenu,
         Lobby,
         Hamemayu,
+        Hutan,
         Arena,
         GameOver
     ]

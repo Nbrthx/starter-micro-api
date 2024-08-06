@@ -30,25 +30,24 @@ export class Game extends Scene {
     map: string;
     player2: Player;
     joystick: Joystick;
-    enemy: Phaser.Physics.Arcade.Sprite;
     weaponHitbox: Phaser.GameObjects.Group;
     collider: any;
     network: Network;
     enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody[];
+    spawnPoint: (from: string) => { x: any; y: any; };
+    from: string;
     attackEvent: EventListener;
     attack: HTMLElement | null;
-    spawnPoint: (from: string) => { x: number, y: number };
-    from: string;
 
     constructor () {
-        super('Lobby');
-        this.map = 'lobby',
+        super('Hutan');
+        this.map = 'hutan'
         this.spawnPoint = (from: string) => {
             if(from == 'hamemayu')
-            return { x: coor(36), y: coor(17) }
+            return { x: coor(1), y: coor(6) }
             else return { x: coor(8), y: coor(8) }
         }
-        this.from = 'hamemayu'
+        this.from = ''
     }
 
     init(props: { from: string }) {
@@ -60,11 +59,11 @@ export class Game extends Scene {
         this.socket = this.registry.get('socket')
 
         // MAP
-        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'lobby' });
+        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'hutan' });
         const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage('tileset', 'tileset') as Phaser.Tilemaps.Tileset;
         this.layer1 = map.createLayer('background', tileset, 0, 0) as Phaser.Tilemaps.TilemapLayer;
         this.layer2 = map.createLayer('wall', tileset, 0, 0)?.setCollisionByExclusion([-1]) as Phaser.Tilemaps.TilemapLayer;
-        this.layer3 = map.getObjectLayer('wall2') as Phaser.Tilemaps.ObjectLayer;
+        //this.layer3 = map.getObjectLayer('wall2') as Phaser.Tilemaps.ObjectLayer;
 
         this.collider = []
         this.collider.push(this.layer2)
@@ -75,30 +74,11 @@ export class Game extends Scene {
         // Hitbox
         this.weaponHitbox = this.add.group()
 
-        // Custom Collision
-        this.layer3.objects.forEach((obj: Phaser.Types.Tilemaps.TiledObject) => {
-            let x: integer = obj.x as integer
-            let y: integer = obj.y as integer
-            let width: integer = obj.width as integer
-            let height: integer = obj.height as integer
-            this.collider.push(this.physics.add.body(x, y, width, height).setImmovable(true))
-        })
-
         // Enterance
         this.enterance = []
-        this.enterance.push(this.physics.add.image(coor(37), coor(17), ''))
+        this.enterance.push(this.physics.add.image(coor(0), coor(7), ''))
         this.enterance[0].setVisible(false)
-        this.enterance[0].setSize(4, 64)
-
-        // Enemy
-        this.enemy = this.physics.add.sprite(coor(12), coor(8), 'char')
-
-        this.physics.add.overlap(this.enemy as any, this.weaponHitbox, (_obj1: any, hitbox: any) => {
-            console.log(hitbox.parent.id);
-            this.network.changeMap('arena')
-            if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
-            this.scene.start('Arena')
-        })
+        this.enterance[0].setSize(4, 32)
 
         // Quest
 
@@ -130,10 +110,9 @@ export class Game extends Scene {
         this.network = new Network(this, this.spawnPoint(this.from).x, this.spawnPoint(this.from).y)
 
         const updatePlayer = () => {
-            if(this.player && this.player.active){
+            if(this.player){
                 this.player.dir.normalize()
                 this.network.updatePlayer(this.map, this.player.x, this.player.y, this.player.dir)
-                console.log('test')
             }
             setTimeout(() => updatePlayer(), 50)
         }
@@ -168,26 +147,26 @@ export class Game extends Scene {
     }
 
     addPlayer(player: PlayerData, main: boolean = false){
+        console.log(player)
         if(main && (!this.player || !this.player.active)){
             // Player
-            this.player = new Player(this, player.x, player.y, 'char', true)
+            this.player = new Player(this, this.spawnPoint(this.from).x, this.spawnPoint(this.from).y, 'char', true)
                     
             this.player.head.setTexture('green-head')
             this.player.id = player.id
             this.player.setCollideWorldBounds(true)
             this.weaponHitbox.add(this.player.weaponHitbox)
-            this.players.add(this.player)
             console.log(player)
 
             // Camera
             this.camera.startFollow(this.player, true, 0.05, 0.05)
             this.physics.add.collider(this.player, this.collider)
 
-            this.physics.add.overlap(this.enterance, this.player, (_obj1, _player) => {
+            this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
                 console.log('hdhsdas')
                 this.network.changeMap('hamemayu')
                 if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
-                this.scene.start('Hamemayu', { from: 'lobby' })
+                this.scene.start('Hamemayu', { from: 'hutan' })
             })
         }
         else{
@@ -216,7 +195,6 @@ export class Game extends Scene {
                         targets: existingPlayer,
                         x: player.x,
                         y: player.y,
-                        ease: 'linear',
                         duration: duration,
                     })
                     existingPlayer.dir.x = parseInt(player.x - existingPlayer.x+'')

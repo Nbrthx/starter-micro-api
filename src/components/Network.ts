@@ -21,7 +21,7 @@ export class Network {
     scene: Lobby | Hamemayu;
     map: string;
 
-    constructor(scene: Lobby | Hamemayu){
+    constructor(scene: Lobby | Hamemayu, x: number, y: number){
         this.scene = scene;
         this.socket = scene.socket;
         this.map = scene.map;
@@ -32,6 +32,8 @@ export class Network {
         //         console.log(Date.now()-time, data)
         //     })
         // }, 50)
+
+        const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
         this.socket.on('join', (data: PlayerData[]) => {
             data.forEach((player: PlayerData) => {
@@ -61,8 +63,8 @@ export class Network {
                 map: this.map,
                 id: this.socket.id,
                 username: 'test',
-                x: 0,
-                y: 0,
+                x: x,
+                y: y,
                 chat: ''
             }
             this.socket.emit('join', data)
