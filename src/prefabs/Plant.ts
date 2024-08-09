@@ -62,7 +62,6 @@ export default class Plant extends Phaser.Physics.Arcade.Sprite {
           if(this.itr == 5){
             // this.complete = true
             // this.scene.stats.addXP(5)
-            (this.scene as Game).quest.growed()
           }
           this.saveState()
           return true
