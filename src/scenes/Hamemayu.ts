@@ -31,17 +31,18 @@ export class Game extends Scene {
     player2: Player;
     joystick: Joystick;
     weaponHitbox: Phaser.GameObjects.Group;
-    collider: any;
+    collider: any[];
     network: Network;
     enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody[];
     spawnPoint: (from: string) => { x: any; y: any; };
     from: string;
     attackEvent: EventListener;
     attack: HTMLElement | null;
+    npc: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
     constructor () {
         super('Hamemayu');
-        this.map = 'lobby'
+        this.map = 'hamemayu'
         this.spawnPoint = (from: string) => {
             if(from == 'lobby')
                 return { x: coor(1), y: coor(6) }
@@ -69,6 +70,9 @@ export class Game extends Scene {
 
         this.collider = []
         this.collider.push(this.layer2)
+
+        // NPCs
+        this.npc = this.physics.add.sprite(coor(6, 8), coor(5, 8), 'char')
 
         // Others
         this.players = this.add.group()
@@ -108,7 +112,11 @@ export class Game extends Scene {
         this.attack?.addEventListener('click', this.attackEvent, true)
 
         // Camera
-        this.camera.setZoom(5,5)
+        let tinyScale = 1
+        console.log(this.scale.width, map.width*16*5)
+        if(this.scale.width > map.width*16*5) tinyScale = this.scale.width / (map.width*16*5)
+        console.log(tinyScale)
+        this.camera.setZoom(5*tinyScale,5*tinyScale)
         this.camera.setBounds(0, 0, map.width*16, map.height*16)
         this.physics.world.setBounds(0, 0, map.width*16, map.height*16)
 
@@ -168,18 +176,33 @@ export class Game extends Scene {
             this.camera.startFollow(this.player, true, 0.05, 0.05)
             this.physics.add.collider(this.player, this.collider)
 
+            // Enterence
             this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
-                console.log('hdhsdas')
                 this.network.changeMap('lobby')
                 if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
                 this.scene.start('Lobby', { from: 'hamemayu' })
             })
-            this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
-                console.log('hdhsdas')
-                this.network.changeMap('hutan')
-                if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
-                this.scene.start('Hutan', { from: 'hamemayu' })
+
+            // NPCs
+            const questBox = document.getElementById('quest-box')
+            const questGo = document.getElementById('go')
+            const questCancel = document.getElementById('cancel')
+            this.physics.add.overlap(this.npc, this.player.weaponHitbox, (_obj1, _player) => {
+                if(questBox) questBox.style.display = 'block'
             })
+            const questGoEvent = () => {
+                this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
+                    this.network.changeMap('hutan')
+                    if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
+                    this.scene.start('Hutan', { from: 'hamemayu' })
+                })
+                if(questBox) questBox.style.display = 'none'
+            }
+            const questCancelEvent = () => {
+                if(questBox) questBox.style.display = 'none'
+            }
+            questGo?.addEventListener('click', questGoEvent)
+            questCancel?.addEventListener('click', questCancelEvent)
         }
         else{
             const newPlayer = new Player(this, player.x, player.y, 'char', false)

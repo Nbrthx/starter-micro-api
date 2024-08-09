@@ -35,6 +35,7 @@ export class Preloader extends Scene
         this.load.image('tileset', 'tilemaps.png');
 
         this.load.spritesheet('char', 'character/full.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('grow-tree', 'property/grow-tree.png', { frameWidth: 32, frameHeight: 32 });
 
         for(var i of outfits){
             this.load.spritesheet(i+'-head', 'character/'+i+'-head.png', { frameWidth: 16, frameHeight: 16 });

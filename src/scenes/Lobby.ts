@@ -122,7 +122,11 @@ export class Game extends Scene {
         this.attack?.addEventListener('click', this.attackEvent, true)
 
         // Camera
-        this.camera.setZoom(5,5)
+        let tinyScale = 1
+        console.log(this.scale.width, map.width*16*5)
+        if(this.scale.width > map.width*16*5) tinyScale = this.scale.width / (map.width*16*5)
+        console.log(tinyScale)
+        this.camera.setZoom(5*tinyScale,5*tinyScale)
         this.camera.setBounds(0, 0, map.width*16, map.height*16)
         this.physics.world.setBounds(0, 0, map.width*16, map.height*16)
 
@@ -223,6 +227,7 @@ export class Game extends Scene {
                     existingPlayer.dir.y = parseInt(player.y - existingPlayer.y+'')
                     existingPlayer.dir.normalize()
                     existingPlayer.update()
+                    console.log(player.x, player.y)
                 }
             }
         })

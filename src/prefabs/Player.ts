@@ -90,7 +90,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.attacking = true
         setTimeout(() => {
             this.attacking = false
-        }, 800)
+        }, 600)
     }
 
     update() {

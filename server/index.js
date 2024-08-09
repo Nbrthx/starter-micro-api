@@ -47,6 +47,8 @@ io.on('connection', (socket) => {
     socket.emit('join', Array.from(roomPlayers.values()));
     socket.broadcast.to(map).emit('newplayer', data)
 
+    // console.log(roomPlayers)
+
     socket.join(map)
 
     socket.on('change-map', (map2) => {
@@ -57,10 +59,8 @@ io.on('connection', (socket) => {
       roomPlayers2.set(socket.id, data);
       roomPlayers.delete(socket.id)
 
-      socket.broadcast.to(map2).emit('newplayer', data)
       socket.broadcast.to(map).emit('leftplayer', socket.id)
-      socket.join(map2)
-
+      socket.leave(map)
     })
   })
 

@@ -38,13 +38,14 @@ export class Game extends Scene {
     from: string;
     attackEvent: EventListener;
     attack: HTMLElement | null;
+    npc: any;
 
     constructor () {
-        super('Hutan');
-        this.map = 'hutan'
+        super('Hutann');
+        this.map = 'hutann'
         this.spawnPoint = (from: string) => {
             if(from == 'hamemayu')
-            return { x: coor(1), y: coor(6) }
+            return { x: coor(1), y: coor(7) }
             else return { x: coor(8), y: coor(8) }
         }
         this.from = ''
@@ -102,7 +103,11 @@ export class Game extends Scene {
         this.attack?.addEventListener('click', this.attackEvent, true)
 
         // Camera
-        this.camera.setZoom(5,5)
+        let tinyScale = 1
+        console.log(this.scale.width, map.width*16*5)
+        if(this.scale.width > map.width*16*5) tinyScale = this.scale.width / (map.width*16*5)
+        console.log(tinyScale)
+        this.camera.setZoom(5*tinyScale,5*tinyScale)
         this.camera.setBounds(0, 0, map.width*16, map.height*16)
         this.physics.world.setBounds(0, 0, map.width*16, map.height*16)
 

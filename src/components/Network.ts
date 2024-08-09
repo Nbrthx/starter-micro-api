@@ -80,8 +80,8 @@ export class Network {
         })
     }
 
-    changeMap(map: string){
+    changeMap(map: string, callback: Function = () => {}){
         this.socket.removeAllListeners()
-        this.socket.emit('change-map', map)
+        this.socket.emit('change-map', map, callback)
     }
 }

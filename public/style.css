@@ -44,9 +44,42 @@ body {
 #attack {
     position: absolute;
     top: calc(100svh - 32vh);
-    left: calc(100vw - 24vh - 180px);
+    left: calc(100vw - 24vh - 80px);
     width: 24vh;
     height: 24vh;
     background-color: #ccc;
     border-radius: 50%;
+}
+
+/* Quest Box */
+
+#quest-box {
+    background: #ffffff;
+    width: calc(50vw - 80px);
+    height: calc(100vh - 80px);
+    position: absolute;
+    top: 40px;
+    left: 25vw;
+    padding: 10px 40px;
+    font-family: sans-serif;
+    font-size: 5vh;
+    overflow-y: scroll;
+    color: #000;
+    display: none;
+}
+
+#go, #cancel {
+    padding: 10px 20px;
+    border: none;
+    margin-top: 8px;
+    width: 100%;
+    background: #66ffaa;
+}
+
+#cancel {
+    background: #ff7788;
+}
+
+#go:hover, #go:focus, #cancel:hover, #cancel:focus {
+    background: #aaaaaa;
 }

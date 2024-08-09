@@ -132,4 +132,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.dir.y = 0
         }
     }
+
+    destroy(): void {
+        this.container.destroy()
+        super.destroy()
+    }
 }

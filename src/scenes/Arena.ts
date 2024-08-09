@@ -5,6 +5,8 @@ import { Joystick } from '../components/Joystick';
 import { Enemy } from '../prefabs/Enemy';
 import { Network } from '../components/Network';
 import { Hitbox } from '../prefabs/Hitbox';
+import { Quest } from '../components/Quest'
+import Plant from '../prefabs/Plant';
 
 interface PlayerData{
     map: string;
@@ -34,14 +36,16 @@ export class Game extends Scene {
     weaponHitbox: Phaser.GameObjects.Group;
     collider: any;
     network: Network;
-    enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody;
+    enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody[];
     attackEvent: EventListener;
     attack: HTMLElement | null;
     enemyTrack: () => void;
+    quest: Quest;
+    plants: Phaser.GameObjects.Group;
 
     constructor () {
-        super('Arena');
-        this.map = 'arena'
+        super('Hutan');
+        this.map = 'hutan'
     }
 
     create () {
@@ -51,13 +55,16 @@ export class Game extends Scene {
         const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
         // MAP
-        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'tarung' });
+        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'hutan' });
         const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage('tileset', 'tileset') as Phaser.Tilemaps.Tileset;
         this.layer1 = map.createLayer('background', tileset, 0, 0) as Phaser.Tilemaps.TilemapLayer;
         this.layer2 = map.createLayer('wall', tileset, 0, 0)?.setCollisionByExclusion([-1]) as Phaser.Tilemaps.TilemapLayer;
 
         this.collider = []
         this.collider.push(this.layer2)
+
+        // Quest
+        this.quest = new Quest(0)
 
         // Others
         this.players = this.add.group()
@@ -76,6 +83,16 @@ export class Game extends Scene {
         this.player.setCollideWorldBounds(true)
         this.weaponHitbox.add(this.player.weaponHitbox)
 
+        // Enterance
+        this.enterance = []
+        this.enterance.push(this.physics.add.image(coor(0), coor(7), ''))
+        this.enterance[0].setVisible(false)
+        this.enterance[0].setSize(4, 32)
+
+        // Plants
+        this.plants = this.add.group()
+        this.plants.add(new Plant(this, coor(8), coor(8), 0))
+
         // Enemy
         let cooldown = true
         this.physics.add.overlap(this.player, this.enemy.attackArea, (_player, parent) => {
@@ -86,7 +103,7 @@ export class Game extends Scene {
                     enemy.attack(x, y)
                 }, enemy.enemyState == 2? 100 : 300)
                 cooldown = false
-                setTimeout(() => cooldown = true, enemy.enemyState == 2? 500 : 1000)
+                setTimeout(() => cooldown = true, enemy.enemyState == 2? 800 : 1500)
                 
             }
         })
@@ -127,9 +144,11 @@ export class Game extends Scene {
                 })
 
                 if(this.enemy.heart <= 0){
-                    this.socket.removeAllListeners()
-                    if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
-                    this.scene.start('Lobby')
+                    this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
+                        if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
+                        this.scene.start('Hamemayu', { from: 'hutan' })
+                    })
+                    this.enemy.destroy()
                 }
                 setTimeout(() => this.enemy.damaged = false, 300)
             }
@@ -189,6 +208,10 @@ export class Game extends Scene {
         }
      
         this.player.update()
+
+        if(!this.enemy) return
+        if(!this.enemy.active) return
+
         this.enemy.track(this.player)
         this.enemy.update()
         this.player.targetPos.x = this.enemy.x
