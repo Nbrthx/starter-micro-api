@@ -6,6 +6,7 @@ import { Network } from '../components/Network';
 import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
 import { Trees } from '../components/Trees';
+import { Quest } from '../components/Quest';
 
 const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -23,29 +24,30 @@ export class Game extends Scene {
     player2: Player;
     joystick: Joystick;
     weaponHitbox: Phaser.GameObjects.Group;
-    collider: any;
+    collider: any[];
     network: Network;
     enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody[];
+    spawnPoint: (from: string) => { x: any; y: any; };
+    from: string;
     attackEvent: () => void;
     attack: HTMLElement | null;
-    spawnPoint: (from: string) => { x: number, y: number };
-    from: string;
+    npc: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     inventory: Inventory;
-    fog: Phaser.GameObjects.TileSprite;
+    quest: Quest;
+    questGoEvent: EventListener;
+    questCancelEvent: EventListener;
 
     constructor () {
-        super('Lobby');
-        this.map = 'lobby',
+        super('Rukun');
+        this.map = 'rukun'
         this.spawnPoint = (from: string) => {
-            if(from == 'hamemayu')
-            return { x: coor(36), y: coor(17) }
-            if(from == 'eling')
-                return { x: coor(36), y: coor(8) }
-            if(from == 'rukun')
-                return { x: coor(34), y: coor(25) }
+            if(from == 'lobby')
+                return { x: coor(1), y: coor(5) }
+            if(from == 'rumah')
+                return { x: coor(14), y: coor(5) }
             else return { x: coor(8), y: coor(8) }
         }
-        this.from = 'hamemayu'
+        this.from = ''
     }
 
     init(props: { from: string }) {
@@ -56,23 +58,23 @@ export class Game extends Scene {
         this.camera = this.cameras.main;
         this.socket = this.registry.get('socket')
 
-        // Fog
-        this.fog = this.add.tileSprite(0, 4*16, this.physics.world.bounds.width, this.physics.world.bounds.height, 'fog')
-        this.fog.setAlpha(0.1)
-        this.fog.setTint(0xccddff)
-        this.fog.setDepth(99999)
-
         // MAP
-        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'lobby' });
+        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: 'rukun' });
         const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage('tileset', 'tileset') as Phaser.Tilemaps.Tileset;
         this.layer1 = map.createLayer('background', tileset, 0, 0) as Phaser.Tilemaps.TilemapLayer;
         this.layer2 = map.createLayer('wall', tileset, 0, 0)?.setCollisionByExclusion([-1]) as Phaser.Tilemaps.TilemapLayer;
         this.layer3 = map.getObjectLayer('wall2') as Phaser.Tilemaps.ObjectLayer;
         const tree1 = map.getObjectLayer('tree1') as Phaser.Tilemaps.ObjectLayer;
-        const tree2 = map.getObjectLayer('tree2') as Phaser.Tilemaps.ObjectLayer;
 
         this.collider = []
         this.collider.push(this.layer2)
+
+        // Custom Collision
+        Trees.collision(this, this.layer3.objects)
+        Trees.tree1(this, tree1.objects)
+
+        // NPCs
+        this.npc = this.physics.add.sprite(coor(10, 8), coor(6, 8), 'char')
 
         // Others
         this.players = this.add.group()
@@ -80,37 +82,21 @@ export class Game extends Scene {
         // Hitbox
         this.weaponHitbox = this.add.group()
 
-        // Custom Collision
-        Trees.collision(this, this.layer3.objects)
-        Trees.tree1(this, tree1.objects)
-        Trees.tree2(this, tree2.objects)
-
         // Enterance
         this.enterance = []
-
-        this.enterance.push(this.physics.add.image(coor(37), coor(17), ''))
+        this.enterance.push(this.physics.add.image(coor(0), coor(5), ''))
         this.enterance[0].setVisible(false)
-        this.enterance[0].setSize(4, 64)
+        this.enterance[0].setSize(4, 32)
 
-        this.enterance.push(this.physics.add.image(coor(37), coor(8), ''))
+        this.enterance.push(this.physics.add.image(coor(13), coor(5), ''))
         this.enterance[1].setVisible(false)
         this.enterance[1].setSize(4, 32)
 
-        this.enterance.push(this.physics.add.image(coor(33, 8), coor(26), ''))
-        this.enterance[2].setVisible(false)
-        this.enterance[2].setSize(48, 4)
+        // Quest
+        this.quest = new Quest()
 
         // Inventory
         this.inventory = new Inventory()
-        const item = document.getElementById('item');
-        const itemAmount = document.getElementById('item-amount');
-        if(item) item.className = 'item-'+this.inventory.currentName()
-        if(itemAmount){
-            itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
-            if(this.inventory.current == 0) itemAmount.style.display = 'none'
-            else if(this.inventory.current == 3) itemAmount.style.display = 'none'
-            else itemAmount.style.display = 'block'
-        }
 
         // Controller
         Controller.basic(this)
@@ -128,10 +114,9 @@ export class Game extends Scene {
         this.network = new Network(this, this.spawnPoint(this.from).x, this.spawnPoint(this.from).y)
 
         const updatePlayer = () => {
-            if(this.player && this.player.active){
+            if(this.player){
                 this.player.dir.normalize()
                 this.network.updatePlayer(this.map, this.player.x, this.player.y, this.player.dir)
-                console.log('test')
             }
             setTimeout(() => updatePlayer(), 50)
         }
@@ -147,45 +132,60 @@ export class Game extends Scene {
         Controller.movement(this)
         
         this.player.update()
-
-        this.fog.tilePositionX += 0.1
-        this.fog.tilePositionY += 0.05
     }
 
     addPlayer(player: PlayerData, main: boolean = false){
+        console.log(player)
         if(main && (!this.player || !this.player.active)){
             // Player
-            this.player = new Player(this, player.x, player.y, 'char', true)
+            this.player = new Player(this, this.spawnPoint(this.from).x, this.spawnPoint(this.from).y, 'char', true)
                     
             this.player.head.setTexture('green-head')
             this.player.id = player.id
             this.player.health = player.health
             this.player.setCollideWorldBounds(true)
             this.weaponHitbox.add(this.player.weaponHitbox)
-            this.players.add(this.player)
             console.log(player)
 
             // Camera
             this.camera.startFollow(this.player, true, 0.05, 0.05)
             this.physics.add.collider(this.player, this.collider)
 
+            // Enterence
             this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
-                this.network.changeMap('hamemayu')
+                this.network.changeMap('lobby')
                 this.removeListener()
-                this.scene.start('Hamemayu', { from: 'lobby' })
+                this.scene.start('Lobby', { from: 'rukun' })
             })
 
-            this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
-                this.network.changeMap('eling')
-                this.removeListener()
-                this.scene.start('Eling', { from: 'lobby' })
+            // NPCs
+            const questBox = document.getElementById('quest-box')
+            this.physics.add.overlap(this.npc, this.player.weaponHitbox, (_obj1, _player) => {
+                this.quest.requestQuest(2)
+                
+                const questGo = document.getElementById('go')
+                const questCancel = document.getElementById('cancel')
+                questGo?.addEventListener('click', this.questGoEvent)
+                questCancel?.addEventListener('click', this.questCancelEvent)
+                
+                if(questBox) questBox.style.display = 'block'
             })
+            this.questGoEvent = () => {
+                this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
+                    this.network.changeMap('hutan')
+                    if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
+                    this.scene.start('Rumah', { from: 'rukun' })
+                })
+                if(questBox) questBox.style.display = 'none'
 
-            this.physics.add.overlap(this.enterance[2], this.player, (_obj1, _player) => {
-                this.network.changeMap('eling')
-                this.removeListener()
-                this.scene.start('Rukun', { from: 'lobby' })
-            })
+                console.log(this.inventory.addItem('pohon', 12))
+                console.log(this.inventory.addItem('ember', 60))
+                const itemAmount = document.getElementById('item-amount');
+                if(itemAmount) itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
+            }
+            this.questCancelEvent = () => {
+                if(questBox) questBox.style.display = 'none'
+            }
         }
         else{
             const newPlayer = new Player(this, player.x, player.y, 'char', false)
@@ -197,6 +197,10 @@ export class Game extends Scene {
 
     removeListener(){
         this.player.destroy()
-        if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
+        const questGo = document.getElementById('go')
+        const questCancel = document.getElementById('cancel')
+        questGo?.removeEventListener('click', this.questGoEvent)
+        questCancel?.removeEventListener('click', this.questCancelEvent)
+        this.attack?.removeEventListener('touchstart', this.attackEvent, true)
     }
 }

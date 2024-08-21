@@ -16,8 +16,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     heart: number;
     enemyState: number;
 
-    constructor(scene: Phaser.Scene, x: number, y: number, char: string | Phaser.Textures.Texture) {
-        super(scene, x, y, char);
+    constructor(scene: Phaser.Scene, x: number, y: number) {
+        super(scene, x, y, 'enemy');
 
         this.scene = scene
         
@@ -33,7 +33,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.weaponHitbox = new Hitbox(this.scene, this, 0, 0, 'circle', 12)
 
-        this.enemyState = -1
+        this.enemyState = 0
         this.damaged = false
         this.heart = 200
 
@@ -63,9 +63,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         else if(this.dir.x < 0) this.flipX = true
 
         if((this.dir.y != 0 || this.dir.x != 0) && this.enemyState != 1){
-            if(this.dir.y < 0) this.anims.play('run-up', true)
-            else this.anims.play('run-down', true)
-        }else this.anims.play('idle', true)
+            this.anims.play('enemy-run', true)
+        }else this.anims.play('enemy-idle', true)
 
         if(this.weapon.anims.currentFrame?.index == 2){
             this.weaponHitbox.enableBody()
@@ -79,27 +78,28 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         if(this.weapon.anims.isPlaying) this.weapon.setVisible(true)
         else this.weapon.setVisible(false)
 
-        this.body?.velocity.normalize().scale(40)
+        this.body?.velocity.normalize().scale(30)
 
         if(this.enemyState == 1){
             this.body?.velocity.normalize().scale(0)
         }
         else if(this.enemyState == 2){
-            this.body?.velocity.normalize().scale(60)
+            this.body?.velocity.normalize().scale(50)
         }
+
+        this.setDepth(this.y-4)
     }
 
     changeState(){
         this.enemyState++
-        if(this.enemyState == 0) setTimeout(() => this.changeState(), 5000)
-        else if(this.enemyState == 1) setTimeout(() => this.changeState(), 2000)
+        if(this.enemyState == 1) setTimeout(() => this.changeState(), 5000)
         else if(this.enemyState == 2){
-            setTimeout(() => this.changeState(), 5000)
+            setTimeout(() => this.changeState(), 3000)
             this.setTint(0xff0000)
         }
         else{ 
             this.enemyState = 0
-            setTimeout(() => this.changeState(), 5000)
+            setTimeout(() => this.changeState(), 6000)
             this.setTint(0xffffff)
         }
     }

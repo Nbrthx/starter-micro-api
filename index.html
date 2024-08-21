@@ -3,31 +3,37 @@
 <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0" />
     <link rel="stylesheet" href="/style.css">
     <title>Phaser - Template</title>
 </head>
 
-<body>
+<body >
     <div id="app">
+        <div id="main-menu">
+            <input type="text" id="username">
+        </div>
         <div id="game-ui">
+            <label id="ping">0ms</label>
+            <div class="dummy item-ember"></div>
+            <div class="dummy item-kayu"></div>
+            <div class="dummy item-pohon"></div>
+            <div class="dummy item-sekop"></div>
+            <div class="dummy item-sword"></div>
             <div id="joystick">
                 <div id="stick"></div>
             </div>
-            <div id="attack"></div>
-            <div id="quest-box">
-                <h2>"Memayu Hayuning Bawana"</h2>
-                <p>
-                    Kamu diperintahkan untuk memperindah indahnya bumi. <br/>
-                    Salah satu cara untuk memperindah bumi, yaitu dengan merawat apa yang sudah indah di bumi. <br />
-                    Contoh sederhananya adalah merawat pohon. <br/>
-                    Tidak jarang manusia malah menebangnya secara liar tanpa memperhitungkan kerugianya. <br/>
-                    Karena itu misi kamu saat ini adalah menanam kembali pohon ditempat yang gersang. <br />
-                    <button id="go">Ayo</button>
-                    <button id="cancel">Nggak Dulu</button>
-                </p>
+            <input type="text" id="chat">
+            <button id="btn-send">Send</button>
+            <div id="attack">
+                <div id="item" class="item-sword"></div>
+                <div id="item-amount">8x</div>
             </div>
+            <div id="switch"></div>
+            <div id="quest-box"></div>
         </div>
+        <div id="request-fullscreen" onclick="document.getElementById('app').requestFullscreen();">Tap for Fullscreen</div>
+        <div id="request-rotate">Please Rotate Yo're Phone</div>
         <div id="game-container"></div>
     </div>
     <script type="module" src="/src/main.ts"></script>

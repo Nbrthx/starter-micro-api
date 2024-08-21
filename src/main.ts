@@ -1,11 +1,15 @@
-import { Boot } from './scenes/Boot';
+import { Boot } from './scenes/_Boot';
+import { GameOver } from './scenes/_GameOver';
+import { MainMenu } from './scenes/_MainMenu';
+import { Preloader } from './scenes/_Preloader';
+
 import { Game as Lobby } from './scenes/Lobby';
 import { Game as Hamemayu } from './scenes/Hamemayu';
-import { Game as Hutan } from './scenes/Forest';
-import { Game as Arena } from './scenes/Arena';
-import { GameOver } from './scenes/GameOver';
-import { MainMenu } from './scenes/MainMenu';
-import { Preloader } from './scenes/Preloader';
+import { Game as Hutan } from './scenes/Hutan';
+import { Game as Eling } from './scenes/Eling';
+import { Game as Kolam } from './scenes/Kolam';
+import { Game as Rukun } from './scenes/Rukun';
+import { Game as Rumah } from './scenes/Rumah';
 
 import { Game, Types } from "phaser";
 
@@ -28,7 +32,7 @@ const config: Types.Core.GameConfig = {
     physics: {
         default: 'arcade',
         arcade: {
-            debug: !0
+            debug: false
         }
     },
     scene: [
@@ -38,7 +42,10 @@ const config: Types.Core.GameConfig = {
         Lobby,
         Hamemayu,
         Hutan,
-        Arena,
+        Eling,
+        Kolam,
+        Rukun,
+        Rumah,
         GameOver
     ]
 };
@@ -46,14 +53,15 @@ const config: Types.Core.GameConfig = {
 export default new Game(config);
 
 const reqfull = document.getElementById('request-fullscreen')
-document.getElementById('app')?.addEventListener("fullscreenchange", () => {
-    if(reqfull && document.fullscreenElement){
-        reqfull.style.display = "none"
-    }
-    else{
-        reqfull?reqfull.style.display = "block" : null
-    }
-})
+// if(reqfull) reqfull.style.display = "block"
+// document.getElementById('app')?.addEventListener("fullscreenchange", () => {
+//     if(reqfull && document.fullscreenElement){
+//         reqfull.style.display = "none"
+//     }
+//     else{
+//         if(reqfull) reqfull.style.display = "block"
+//     }
+// })
 
 declare global {
     interface Navigator {

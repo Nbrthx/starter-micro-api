@@ -27,11 +27,16 @@ export class MainMenu extends Scene
             align: 'center'
         }).setOrigin(0.5);
 
+        const username = document.getElementById('username') as HTMLInputElement
         
         this.registry.set('socket', socket)
         this.title.setInteractive()
         this.title.once('pointerdown', () => {
-
+            this.registry.set('username', username.value)
+            const mainMenu =  document.getElementById('main-menu')
+            const ui =  document.getElementById('game-ui')
+            if(mainMenu) mainMenu.style.display = 'none'
+            if(ui) ui.style.display = 'block'
             this.scene.start('Lobby');
 
         });

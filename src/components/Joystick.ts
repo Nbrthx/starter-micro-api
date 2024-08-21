@@ -5,7 +5,6 @@ export class Joystick{
 
     x: number;
     y: number;
-    attack: boolean;
 
     offset: { x: number, y: number };
     isDragging: boolean;
@@ -17,26 +16,25 @@ export class Joystick{
 
         this.x = 0
         this.y = 0
-        this.attack = false
 
         this.offset = { x: 0, y: 0 };
         this.isDragging = false;
         
-        this.joystick.addEventListener('touchstart', this.touchstart.bind(this));
+        this.joystick.addEventListener('touchstart', this.touchstart.bind(this), false);
 
-        window.addEventListener('touchmove', this.touchmove.bind(this));
+        this.joystick.addEventListener('touchmove', this.touchmove.bind(this), false);
         
-        window.addEventListener('touchend', this.touchend.bind(this));
+        this.joystick.addEventListener('touchend', this.touchend.bind(this), false);
     }
 
     touchstart(e: TouchEvent){
-        if (e.touches.length === 1) {
-            this.isDragging = true;
-            this.joystick.style.left = "calc("+e.touches[0].clientX+"px - 12vh)";
-            this.joystick.style.top = "calc("+e.touches[0].clientY+"px - 12vh)";
-            this.offset.x = e.touches[0].clientX - this.joystick.offsetLeft;
-            this.offset.y = e.touches[0].clientY - this.joystick.offsetTop;
-        }
+        if(e.touches.length > 1) return
+        
+        this.isDragging = true;
+        this.joystick.style.left = "calc("+e.touches[0].clientX+"px - 14vh)";
+        this.joystick.style.top = "calc("+e.touches[0].clientY+"px - 14vh)";
+        this.offset.x = e.touches[0].clientX - this.joystick.offsetLeft;
+        this.offset.y = e.touches[0].clientY - this.joystick.offsetTop;
     }
 
     touchmove(e: TouchEvent){
@@ -52,17 +50,17 @@ export class Joystick{
                 this.y = (this.y / distance) * radius;
             }
     
-            this.stick.style.left = 'calc('+ this.x + 'px + 6vh)';
-            this.stick.style.top = 'calc('+ this.y + 'px + 6vh)';
+            this.stick.style.left = 'calc('+ this.x + 'px + 8vh)';
+            this.stick.style.top = 'calc('+ this.y + 'px + 8vh)';
         }
     }
 
     touchend(){
-        this.isDragging = false;
+        //this.isDragging = false;
         this.stick.style.left = 'calc(50% - 6vh)';
         this.stick.style.top = 'calc(50% - 6vh)';
         this.joystick.style.left = "80px";
-        this.joystick.style.top = "calc(100svh - 32vh)";
+        this.joystick.style.top = "calc(100svh - 36vh)";
 
         this.x = 0
         this.y = 0

@@ -1,37 +1,20 @@
-import { Player } from '../prefabs/Player';
+import { Player , PlayerData} from '../prefabs/Player';
 import { Socket } from 'socket.io-client';
 import { Game as Lobby } from '../scenes/Lobby';
 import { Game as Hamemayu } from '../scenes/Hamemayu';
-
-interface PlayerData{
-    map: string;
-    id: string;
-    username: string;
-    x: number;
-    y: number;
-    posX: number;
-    posY: number;
-    chat: string;
-}
+import { Game as Rumah } from '../scenes/Rumah';
 
 export class Network {
 
     socket: Socket;
     player: Player;
-    scene: Lobby | Hamemayu;
+    scene: Lobby | Hamemayu | Rumah;
     map: string;
 
-    constructor(scene: Lobby | Hamemayu, x: number, y: number){
+    constructor(scene: Lobby | Hamemayu | Rumah, x: number, y: number){
         this.scene = scene;
         this.socket = scene.socket;
         this.map = scene.map;
-
-        // setInterval(() => {
-        //     let time = Date.now()
-        //     this.socket.emit('ping', (data: string) => {
-        //         console.log(Date.now()-time, data)
-        //     })
-        // }, 50)
 
         const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -51,12 +34,53 @@ export class Network {
         })
 
         this.socket.on('leftplayer', (id: string) => {
-            this.scene.deletePlayer(id)
+            const existingPlayer = this.scene.players.getChildren().find((p: any) => p.id === id) as Player;
+            if (existingPlayer) {
+                existingPlayer.destroy()
+            }
         })
 
         this.socket.on('update-player', data => {
-            this.scene.updatePlayer(data || [])
+            data.forEach((player: PlayerData) => {
+                if (player.map === this.map) {
+                    const existingPlayer = this.scene.players.getChildren().find((p: any) => p.id === player.id) as Player;
+                    if (existingPlayer && existingPlayer.id != this.socket.id) {
+                        var distance = Phaser.Math.Distance.Between(existingPlayer.x, existingPlayer.y, player.x, player.y);
+                        var duration = distance*10;
+                        this.scene.add.tween({
+                            targets: existingPlayer,
+                            x: player.x,
+                            y: player.y,
+                            ease: 'linear',
+                            duration: duration,
+                        })
+                        existingPlayer.dir.x = parseInt(player.x - existingPlayer.x+'')
+                        existingPlayer.dir.y = parseInt(player.y - existingPlayer.y+'')
+                        existingPlayer.dir.normalize()
+                        existingPlayer.health = player.health
+                        existingPlayer.update()
+                        console.log(player.x, player.y)
+                    }
+                }
+            })
         })
+
+        this.socket.on('chat', (data: { id: number, text: string}) => {
+            const existingPlayer = this.scene.players.getChildren().find((p: any) => p.id === data.id) as Player;
+            if (existingPlayer) {
+                existingPlayer.playerChat.writeText(data.text)
+            }
+        })
+
+        const ping = () => {
+            let time = Date.now()
+            this.socket.emit('ping', () => {
+                const label = document.getElementById('ping')
+                if(label) label.innerHTML = (Date.now()-time)+'ms'
+            })
+            setTimeout(() => ping(), 1000)
+        }
+        ping()
 
         if(this.socket.id){
             const data = {
@@ -76,7 +100,7 @@ export class Network {
             map: map,
             x: x,
             y: y,
-            dir: dir
+            dir: dir,
         })
     }
 

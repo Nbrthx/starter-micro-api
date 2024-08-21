@@ -1,8 +1,42 @@
+@font-face {
+    font-family: 'Pixel';
+    src: url(./assets/m5x7.ttf);
+}
+
+* {
+    user-select: none;
+}
+
 body {
     margin: 0;
     padding: 0;
     color: rgba(255, 255, 255, 0.87);
     background-color: #000000;
+    font-family: 'Pixel', sans-serif;
+}
+
+#request-rotate{
+    width: 100vw;
+    height: 55vh;
+    display: block;
+    text-align: center;
+    position: absolute;
+    background: #000;
+    z-index: 100;
+    padding-top: 45vh;
+    font-size: 6vh;
+}
+
+#request-fullscreen{
+    width: 100vw;
+    height: 55vh;
+    text-align: center;
+    position: absolute;
+    background: #000;
+    z-index: 100;
+    padding-top: 45vh;
+    font-size: 6vh;
+    display: none;
 }
 
 #app {
@@ -14,19 +48,41 @@ body {
     align-items: center;
 }
 
+#main-menu {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: none;
+}
+
+#username {
+    position: relative;
+    left: calc(50vw - 50svh);
+    top: calc(50vh);
+    width: 60svh;
+    font-size: 6vh;
+}
+
+/* GAME UI */
+
 #game-ui {
     position: absolute;
     left: 0;
     top: 0;
-    /* display: none; */
+    display: none;
+}
+
+#ping{
+    font-size: 5vh;
+    position: absolute;
 }
 
 #joystick {
     position: absolute;
-    top: calc(100svh - 32vh);
+    top: calc(100svh - 36vh);
     left: 80px;
-    width: 24vh;
-    height: 24vh;
+    width: 28vh;
+    height: 28vh;
     background-color: #ccc;
     border-radius: 50%;
 }
@@ -47,8 +103,51 @@ body {
     left: calc(100vw - 24vh - 80px);
     width: 24vh;
     height: 24vh;
-    background-color: #ccc;
     border-radius: 50%;
+    background: #dee;
+    font-family: sans-serif;
+    z-index: 100;
+}
+
+#item {
+    background-size: 100%;
+    width: 14vh;
+    height: 14vh;
+    position: absolute;
+    top: 5vh;
+    left: 5vh;
+    image-rendering: pixelated;
+}
+
+#item-amount {
+    font-size: 4vh;
+    color: #000;
+    position: relative;
+    width: 0;
+    font-weight: 900;
+    top: 16vh;
+    left: 14vh;
+}
+
+.dummy {
+    display: block;
+}
+
+.item-sword { background-image: url("assets/items/sword.png"); }
+.item-ember { background-image: url("assets/items/ember.png"); }
+.item-kayu { background-image: url("assets/items/kayu.png"); }
+.item-pohon { background-image: url("assets/items/pohon.png"); }
+.item-sekop { background-image: url("assets/items/sekop.png"); }
+
+#switch {
+    background-image: url("assets/switch.png");
+    background-size: 100%;
+    width: 16vh;
+    height: 16vh;
+    position: absolute;
+    top: calc(50svh - 8vh);
+    left: calc(100vw - 24vh);
+    image-rendering: pixelated;
 }
 
 /* Quest Box */
@@ -61,8 +160,7 @@ body {
     top: 40px;
     left: 25vw;
     padding: 10px 40px;
-    font-family: sans-serif;
-    font-size: 5vh;
+    font-size: 6vh;
     overflow-y: scroll;
     color: #000;
     display: none;
@@ -73,6 +171,8 @@ body {
     border: none;
     margin-top: 8px;
     width: 100%;
+    font-size: 6vh;
+    font-family: 'Pixel', sans-serif;
     background: #66ffaa;
 }
 
@@ -82,4 +182,29 @@ body {
 
 #go:hover, #go:focus, #cancel:hover, #cancel:focus {
     background: #aaaaaa;
+}
+
+#chat{
+    position: absolute;
+    width: 60vh;
+    left: calc(50vw - 30vh);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Pixel', sans-serif;
+    font-size: 6vh;
+}
+
+#btn-send{
+    position: absolute;
+    left: calc(50vw + 30vh + 4px);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Pixel', sans-serif;
+    font-size: 6vh;
+}
+
+@media screen and (orientation: landscape) {
+    #request-rotate{
+        display: none;
+    }
 }

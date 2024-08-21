@@ -1,19 +1,12 @@
 import { Scene } from 'phaser';
-import { Player } from '../prefabs/Player';
+import { Player, PlayerData } from '../prefabs/Player';
 import { Socket } from 'socket.io-client';
 import { Joystick } from '../components/Joystick';
 import { Network } from '../components/Network';
-
-interface PlayerData{
-    map: string;
-    id: string;
-    username: string;
-    x: number;
-    y: number;
-    posX: number;
-    posY: number;
-    chat: string;
-}
+import { Inventory } from '../components/Inventory';
+import { Controller } from '../components/Controller';
+import { Trees } from '../components/Trees';
+import { Quest } from '../components/Quest';
 
 const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -36,9 +29,13 @@ export class Game extends Scene {
     enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody[];
     spawnPoint: (from: string) => { x: any; y: any; };
     from: string;
-    attackEvent: EventListener;
+    attackEvent: () => void;
     attack: HTMLElement | null;
     npc: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    inventory: Inventory;
+    quest: Quest;
+    questGoEvent: EventListener;
+    questCancelEvent: EventListener;
 
     constructor () {
         super('Hamemayu');
@@ -67,9 +64,13 @@ export class Game extends Scene {
         this.layer1 = map.createLayer('background', tileset, 0, 0) as Phaser.Tilemaps.TilemapLayer;
         this.layer2 = map.createLayer('wall', tileset, 0, 0)?.setCollisionByExclusion([-1]) as Phaser.Tilemaps.TilemapLayer;
         //this.layer3 = map.getObjectLayer('wall2') as Phaser.Tilemaps.ObjectLayer;
+        const home1 = map.getObjectLayer('home1') as Phaser.Tilemaps.ObjectLayer;
 
         this.collider = []
         this.collider.push(this.layer2)
+
+        // Custom Collision
+        Trees.home1(this, home1.objects)
 
         // NPCs
         this.npc = this.physics.add.sprite(coor(6, 8), coor(5, 8), 'char')
@@ -91,25 +92,21 @@ export class Game extends Scene {
         this.enterance[1].setSize(4, 32)
 
         // Quest
+        this.quest = new Quest()
 
+        // Inventory
+        this.inventory = new Inventory()
+        const item = document.getElementById('item');
+        const itemAmount = document.getElementById('item-amount');
+        if(item) item.className = 'item-'+this.inventory.currentName()
+        if(itemAmount){
+            itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
+            if(this.inventory.current == 0) itemAmount.style.display = 'none'
+            else itemAmount.style.display = 'block'
+        }
 
         // Controller
-        const joystick = document.getElementById('joystick');
-        const stick = document.getElementById('stick');
-        this.attack = document.getElementById('attack');
-
-        if(joystick && stick) this.joystick = new Joystick(joystick, stick);
-        this.attackEvent = () => {
-            this.socket.emit('attack', {
-                map: this.map,
-                x: this.player.x,
-                y: this.player.y,
-                dir: this.player.dir
-            })
-            if(this.player && !this.player.attacking) this.player.attack()
-        }
-        
-        this.attack?.addEventListener('click', this.attackEvent, true)
+        Controller.basic(this)
 
         // Camera
         let tinyScale = 1
@@ -139,23 +136,7 @@ export class Game extends Scene {
         if(!this.player) return
         if(!this.player.active) return
 
-        const cursors: any = this.input.keyboard?.addKeys('W,A,S,D') as Phaser.Input.Keyboard.KeyboardManager;
-        
-        if (cursors.A.isDown) {
-            this.player.dir.x = -1
-        } else if (cursors.D.isDown) {
-            this.player.dir.x = 1
-        } else {
-            this.player.dir.x = this.joystick.x
-        }
-
-        if (cursors.W.isDown) {
-            this.player.dir.y = -1
-        } else if (cursors.S.isDown) {
-            this.player.dir.y = 1
-        } else {
-            this.player.dir.y = this.joystick.y
-        }
+        Controller.movement(this)
         
         this.player.update()
     }
@@ -168,6 +149,7 @@ export class Game extends Scene {
                     
             this.player.head.setTexture('green-head')
             this.player.id = player.id
+            this.player.health = player.health
             this.player.setCollideWorldBounds(true)
             this.weaponHitbox.add(this.player.weaponHitbox)
             console.log(player)
@@ -179,30 +161,41 @@ export class Game extends Scene {
             // Enterence
             this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
                 this.network.changeMap('lobby')
-                if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
+                this.removeListener()
                 this.scene.start('Lobby', { from: 'hamemayu' })
             })
 
             // NPCs
             const questBox = document.getElementById('quest-box')
-            const questGo = document.getElementById('go')
-            const questCancel = document.getElementById('cancel')
             this.physics.add.overlap(this.npc, this.player.weaponHitbox, (_obj1, _player) => {
-                if(questBox) questBox.style.display = 'block'
+                this.quest.requestQuest(0)
+                
+                const questGo = document.getElementById('go')
+                const questCancel = document.getElementById('cancel')
+                questGo?.addEventListener('click', this.questGoEvent, true)
+                questCancel?.addEventListener('click', this.questCancelEvent, true)
+                
+                if(questBox){
+                    questBox.style.display = 'block'
+                    questBox.scrollTo(0, 0)
+                }
             })
-            const questGoEvent = () => {
+            this.questGoEvent = () => {
                 this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
                     this.network.changeMap('hutan')
-                    if(this.attackEvent) this.attack?.removeEventListener('click', this.attackEvent, true)
+                    if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
                     this.scene.start('Hutan', { from: 'hamemayu' })
                 })
                 if(questBox) questBox.style.display = 'none'
+
+                console.log(this.inventory.setItem('pohon', 12))
+                console.log(this.inventory.setItem('ember', 60))
+                const itemAmount = document.getElementById('item-amount');
+                if(itemAmount) itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
             }
-            const questCancelEvent = () => {
+            this.questCancelEvent = () => {
                 if(questBox) questBox.style.display = 'none'
             }
-            questGo?.addEventListener('click', questGoEvent)
-            questCancel?.addEventListener('click', questCancelEvent)
         }
         else{
             const newPlayer = new Player(this, player.x, player.y, 'char', false)
@@ -212,32 +205,12 @@ export class Game extends Scene {
         }
     }
 
-    deletePlayer(id: string){
-        const existingPlayer = this.players.getChildren().find((p: any) => p.id === id) as Player;
-        if (existingPlayer) {
-            existingPlayer.destroy()
-        }
-    }
-
-    updatePlayer(data: PlayerData[]){
-        data.forEach((player: PlayerData) => {
-            if (player.map === this.map) {
-                const existingPlayer = this.players.getChildren().find((p: any) => p.id === player.id) as Player;
-                if (existingPlayer && existingPlayer.id != this.socket.id) {
-                    var distance = Phaser.Math.Distance.Between(existingPlayer.x, existingPlayer.y, player.x, player.y);
-                    var duration = distance*10;
-                    this.add.tween({
-                        targets: existingPlayer,
-                        x: player.x,
-                        y: player.y,
-                        duration: duration,
-                    })
-                    existingPlayer.dir.x = parseInt(player.x - existingPlayer.x+'')
-                    existingPlayer.dir.y = parseInt(player.y - existingPlayer.y+'')
-                    existingPlayer.dir.normalize()
-                    existingPlayer.update()
-                }
-            }
-        })
+    removeListener(){
+        this.player.destroy()
+        const questGo = document.getElementById('go')
+        const questCancel = document.getElementById('cancel')
+        questGo?.removeEventListener('click', this.questGoEvent)
+        questCancel?.removeEventListener('click', this.questCancelEvent)
+        this.attack?.removeEventListener('touchstart', this.attackEvent, true)
     }
 }
