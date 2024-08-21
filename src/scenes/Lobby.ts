@@ -159,7 +159,6 @@ export class Game extends Scene {
                     
             this.player.head.setTexture('green-head')
             this.player.id = player.id
-            this.player.health = player.health
             this.player.setCollideWorldBounds(true)
             this.weaponHitbox.add(this.player.weaponHitbox)
             this.players.add(this.player)

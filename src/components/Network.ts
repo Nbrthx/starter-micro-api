@@ -72,15 +72,18 @@ export class Network {
             }
         })
 
-        const ping = () => {
-            let time = Date.now()
-            this.socket.emit('ping', () => {
-                const label = document.getElementById('ping')
-                if(label) label.innerHTML = (Date.now()-time)+'ms'
-            })
-            setTimeout(() => ping(), 1000)
-        }
-        ping()
+        this.scene.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                let time = Date.now()
+                this.socket.emit('ping', () => {
+                    const label = document.getElementById('ping')
+                    if(label) label.innerHTML = (Date.now()-time)+'ms'
+                })
+            },
+            callbackScope: this,
+            loop: true
+        })
 
         if(this.socket.id){
             const data = {
