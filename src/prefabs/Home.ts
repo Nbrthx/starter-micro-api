@@ -1,5 +1,7 @@
 // Suggested code may be subject to a license. Learn more: ~LicenseLog:2987568547.
 
+import { Game } from "../scenes/Rumah";
+
 export class Home extends Phaser.Physics.Arcade.Sprite {
 
     id: number;
@@ -29,6 +31,7 @@ export class Home extends Phaser.Physics.Arcade.Sprite {
           if(this.itr == 3){
             this.complete = true
           }
+          ;(this.scene as Game).socket.emit('home', { id: this.id, itr: this.itr })
           return true
         }
       }

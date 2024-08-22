@@ -1,4 +1,5 @@
 const { Server } = require('socket.io')
+const sha256 = require('sha256')
 // const { createServer } = require('http')
 // const express = require("express")
 
@@ -17,6 +18,7 @@ const io = new Server({
 
 const rooms = new Map()
 
+// Server Tick
 function serverTick(){
   rooms.forEach((roomPlayers, map) => {
     io.to(String(map)).emit('update-player', Array.from(roomPlayers.values()) || []);
@@ -25,7 +27,9 @@ function serverTick(){
 }
 serverTick()
 
+// Map Rumah
 let target = 0
+let home = [0,0,0,0,0]
 function mapRumah(){
   let roomPlayers = rooms.get('rumah');
   if(roomPlayers){
@@ -39,8 +43,16 @@ function mapRumah(){
 }
 mapRumah()
 
-const coor = (x, xx = 0) => x*16+xx
+// Accounts
+const accounts = []
+const clients = new Map()
+const items = {
+  pohon: 0,
+  ember: 1,
+  kayu: 2
+}
 
+// Socket io
 io.on('connection', (socket) => {
   console.log('a user '+socket.id+' connected')
 
@@ -48,8 +60,42 @@ io.on('connection', (socket) => {
     callback()
   })
 
+  // Account
+  socket.on('register', (data, callback) => {
+    const username = accounts.find(v => v.username == data.username)
+    if(username){
+      callback(false)
+      return
+    }
+    const account = {
+      username: data.username,
+      hash: sha256(data.hash),
+      head: [],
+      outfit: [],
+      xp: 0,
+      inventory: [0, 0, 0] // Pohon, Ember, Kayu
+    }
+    accounts.push(account)
+    callback(true)
+  })
+
+  socket.on('login', (text, callback) => {
+    const account = accounts.find(v => v.hash == sha256(text))
+    if(account){
+      clients.set(socket.id, account.username)
+      callback(account.username)
+    }
+    else callback(false)
+  })
+
+  socket.on('get-account', callback => {
+    const account = accounts.find(v => v.username == clients.get(socket.id))
+    callback(account)
+  })
+
+
+  // Player Connection
   socket.on('join', (data) => {
-    console.log('socket: '+data.id)
     const { map } = data
     
     if (!rooms.has(map)) {
@@ -61,7 +107,7 @@ io.on('connection', (socket) => {
     socket.emit('join', Array.from(roomPlayers.values()));
     socket.broadcast.to(map).emit('newplayer', data)
 
-    // console.log(roomPlayers)
+    if(map == 'rumah') socket.emit('home', home)
 
     socket.join(map)
 
@@ -104,6 +150,29 @@ io.on('connection', (socket) => {
     }
   })
 
+  // Inventory
+  socket.on('inventory-update', (operation, name, amount) => {
+    const account = accounts.find(v => v.username == clients.get(socket.id))
+    
+    console.log(operation, name, amount)
+    if(!account) return
+    if(operation == 'add') account.inventory[items[name]] += amount
+    else if(operation == 'sub') account.inventory[items[name]] -= amount
+    else if(operation == 'set') account.inventory[items[name]] = amount
+  })
+
+  // Map Rumah
+  socket.on('home', (data) => {
+    home[data.id] = data.itr
+    let complete = true
+    home.forEach(v => {
+      if(v < 3) complete = false
+    })
+    if(complete) home = [0,0,0,0,0]
+  })
+
+
+  // Player Disconnect
   socket.on('disconnect', () => {
     console.log('user '+socket.id+' disconnected')
     rooms.forEach((roomPlayers, map) => {

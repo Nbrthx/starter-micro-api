@@ -1,7 +1,8 @@
 import { Scene, GameObjects } from 'phaser';
 import io from 'socket.io-client'
+import { getPasscolor, readPasscolor, downloadImg } from '../components/Passcolor';
 
-const socket = io('https://88f657d4-76d7-4a16-8879-9a5ccf160318-00-3roq4zs5sozw1.kirk.replit.dev:3000', { transports: ['websocket'] })
+const socket = io('http://localhost:3000', { transports: ['websocket'] })
 
 export class MainMenu extends Scene
 {
@@ -27,12 +28,84 @@ export class MainMenu extends Scene
             align: 'center'
         }).setOrigin(0.5);
 
-        const username = document.getElementById('username') as HTMLInputElement
+        // Register and Login
+        const loginBox = document.getElementById('login-box') as HTMLInputElement
+        const registerBox = document.getElementById('register-box') as HTMLInputElement
+
+        const login = document.getElementById('login') as HTMLButtonElement
+        const register = document.getElementById('register') as HTMLButtonElement
+
+        const haveAccount = document.getElementById('have-account') as HTMLInputElement
+        const noAccount = document.getElementById('no-account') as HTMLInputElement
+
+        haveAccount.addEventListener('click', () => {
+            loginBox.style.display = 'block'
+            registerBox.style.display = 'none'
+        })
+        noAccount.addEventListener('click', () => {
+            loginBox.style.display = 'none'
+            registerBox.style.display = 'block'
+        })
+
+        const file = document.createElement('input')
+        file.type = 'file'
+
+        let username = ''
+        const loginCallback = (data: string, text: string) => {
+            if(data){
+                username = data
+                this.registry.set('username', username)
+                localStorage.setItem('hash', text)
+                loginBox.style.display = 'none'
+            }
+            else{
+                alert('Akun tidak ditemukan')
+            }
+        }
+
+        let hash = localStorage.getItem('hash')
+        if(hash) socket.emit('login', hash, (data: string) => loginCallback(data, hash)) 
+
+        file.onchange = e => readPasscolor(((e.target as HTMLInputElement).files as FileList)[0], text => {
+            socket.emit('login', text, (data: string) => loginCallback(data, text))
+        })
+
+        const elmUsername = document.getElementById('username') as HTMLInputElement
+
+        const randomString = (n: number) => {
+            let text = ''
+            let format = '0123456789abcdef'
+            for(let i=0; i<n; i++){
+                text += format[Math.floor(Math.random()*16)]
+            }
+            return text
+        }
+
+        const registerHandler = () => {
+            if(elmUsername.value.length < 4){
+                alert('Nama harus lebih dari 3 huruf')
+                return
+            }
+            let text = randomString(64)
+            socket.emit('register', { hash: text, username: elmUsername.value }, (succes: boolean) => {
+                if(succes){
+                    alert('Gambar yang kamu download adalah password akun kamu, simpan dengan baik. Kalau hilang, akunmu hilang :D')
+                    downloadImg(getPasscolor(text))
+                }
+                else {
+                    alert('Register Gagal, username sudah dipakai')
+                }
+            })
+        }
+
+        login.addEventListener('click', () => file.click())
+        register.addEventListener('click', () => registerHandler())
+
         
         this.registry.set('socket', socket)
+
         this.title.setInteractive()
         this.title.once('pointerdown', () => {
-            this.registry.set('username', username.value)
             const mainMenu =  document.getElementById('main-menu')
             const ui =  document.getElementById('game-ui')
             if(mainMenu) mainMenu.style.display = 'none'

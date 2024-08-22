@@ -57,7 +57,7 @@ export class Network {
                         existingPlayer.dir.x = parseInt(player.x - existingPlayer.x+'')
                         existingPlayer.dir.y = parseInt(player.y - existingPlayer.y+'')
                         existingPlayer.dir.normalize()
-                        existingPlayer.health = player.health
+                        existingPlayer.playerName.setText(player.username)
                         existingPlayer.update()
                         console.log(player.x, player.y)
                     }
@@ -89,7 +89,7 @@ export class Network {
             const data = {
                 map: this.map,
                 id: this.socket.id,
-                username: 'test',
+                username: this.scene.registry.get('username'),
                 x: x,
                 y: y,
                 chat: ''

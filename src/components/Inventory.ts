@@ -1,16 +1,31 @@
+import { Socket } from "socket.io-client";
+
 interface Item{
     name: string;
     amount: number;
 }
 
+interface Account{
+    username: string;
+    hash: string;
+    head: string[];
+    outfit: string[];
+    xp: number;
+    inventory: number[];
+}
+
+const contableItem = ['pohon', 'ember', 'kayu']
+
 export class Inventory {
 
     current: number;
     items: Item[];
+    socket: Socket;
 
-    constructor(){
+    constructor(socket: Socket){
+        this.socket = socket
         this.current = JSON.parse(localStorage.getItem('current') || '{ "current": 0 }').current
-        this.items = JSON.parse(localStorage.getItem('items') || JSON.stringify([{
+        this.items = [{
             name: 'sword',
             amount: 0
         },
@@ -29,15 +44,20 @@ export class Inventory {
         {
             name: 'kayu',
             amount: 0
-        }]))
-        localStorage.setItem('items', JSON.stringify(this.items))
+        }]
+        socket.emit('get-account', (data: Account) => {
+            data.inventory.forEach((v, i) => {
+                const item = this.items.find(w => w.name == contableItem[i])
+                if(item) item.amount = v
+            })
+        })
     }
 
     addItem(name: string, amount: number){
         const item = this.items.find(v => v.name == name)
         if(item){
             item.amount += amount
-            localStorage.setItem('items', JSON.stringify(this.items))
+            this.socket.emit('update-inventory', 'add', name, amount)
             return true
         }
         return false
@@ -47,7 +67,7 @@ export class Inventory {
         const item = this.items.find(v => v.name == name)
         if(item){
             item.amount = amount
-            localStorage.setItem('items', JSON.stringify(this.items))
+            this.socket.emit('update-inventory', 'set', name, amount)
             return true
         }
         return false
@@ -57,7 +77,7 @@ export class Inventory {
         const item = this.items.find(v => v.name == name)
         if(item && item.amount >= amount){
             item.amount -= amount
-            localStorage.setItem('items', JSON.stringify(this.items))
+            this.socket.emit('update-inventory', 'sub', name, amount)
             return true
         }
         return false

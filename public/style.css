@@ -5,6 +5,9 @@
 
 * {
     user-select: none;
+    -webkit-user-select: none;
+    font-family: 'Pixel', sans-serif;
+    font-size: 6vh;
 }
 
 body {
@@ -12,7 +15,6 @@ body {
     padding: 0;
     color: rgba(255, 255, 255, 0.87);
     background-color: #000000;
-    font-family: 'Pixel', sans-serif;
 }
 
 #request-rotate{
@@ -48,6 +50,8 @@ body {
     align-items: center;
 }
 
+/* MAIN MENU */
+
 #main-menu {
     position: absolute;
     left: 0;
@@ -55,12 +59,28 @@ body {
     display: none;
 }
 
-#username {
+#register-box, #login-box {
+    background: #ffffff;
+    width: calc(50vw - 60px);
+    left: calc(25vw - 30px);
+    top: calc(20vh);
     position: relative;
-    left: calc(50vw - 50svh);
-    top: calc(50vh);
-    width: 60svh;
-    font-size: 6vh;
+    padding: 30px 60px;
+    color: #000
+}
+
+#have-account, #no-account {
+    text-decoration: underline;
+}
+
+h1 {
+    font-size: 16vh;
+    font-weight: 900;
+    margin-top: 8px;
+}
+
+#register-box {
+    display: none;
 }
 
 /* GAME UI */
@@ -120,7 +140,7 @@ body {
 }
 
 #item-amount {
-    font-size: 4vh;
+    font-size: 7vh;
     color: #000;
     position: relative;
     width: 0;

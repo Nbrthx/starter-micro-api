@@ -96,7 +96,7 @@ export class Game extends Scene {
         this.quest = new Quest()
 
         // Inventory
-        this.inventory = new Inventory()
+        this.inventory = new Inventory(this.socket)
         const item = document.getElementById('item');
         const itemAmount = document.getElementById('item-amount');
         if(item) item.className = 'item-'+this.inventory.currentName()

@@ -96,13 +96,24 @@ export class Game extends Scene {
         // Home
         this.homes = []
         this.homes.push(new Home(this, coor(2, 8), coor(2), 0))
-        this.homes.push(new Home(this, coor(5, 4), coor(2), 0))
-        this.homes.push(new Home(this, coor(8), coor(2), 0))
-        this.homes.push(new Home(this, coor(10, 12), coor(2), 0))
-        this.homes.push(new Home(this, coor(13, 8), coor(2), 0))
+        this.homes.push(new Home(this, coor(5, 4), coor(2), 1))
+        this.homes.push(new Home(this, coor(8), coor(2), 2))
+        this.homes.push(new Home(this, coor(10, 12), coor(2), 3))
+        this.homes.push(new Home(this, coor(13, 8), coor(2), 4))
+
+        this.socket.on('home', data => {
+            console.log(data)
+            this.homes.forEach((v, i) => {
+                v.itr = data[i]
+                v.setFrame(data[i])
+                if(v.itr == 3){
+                    v.complete = true
+                }
+            })
+        })
 
         // Inventory
-        this.inventory = new Inventory()
+        this.inventory = new Inventory(this.socket)
         const item = document.getElementById('item');
         const itemAmount = document.getElementById('item-amount');
         if(item) item.className = 'item-'+this.inventory.currentName()

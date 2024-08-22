@@ -96,7 +96,7 @@ export class Game extends Scene {
         this.quest = new Quest()
 
         // Inventory
-        this.inventory = new Inventory()
+        this.inventory = new Inventory(this.socket)
 
         // Controller
         Controller.basic(this)
@@ -176,11 +176,6 @@ export class Game extends Scene {
                     this.scene.start('Rumah', { from: 'rukun' })
                 })
                 if(questBox) questBox.style.display = 'none'
-
-                console.log(this.inventory.addItem('pohon', 12))
-                console.log(this.inventory.addItem('ember', 60))
-                const itemAmount = document.getElementById('item-amount');
-                if(itemAmount) itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
             }
             this.questCancelEvent = () => {
                 if(questBox) questBox.style.display = 'none'

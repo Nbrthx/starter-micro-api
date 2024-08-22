@@ -29,6 +29,7 @@
         "jsdom": "^24.1.1",
         "phaser": "^3.80.1",
         "phaser3spectorjs": "npm:empty-npm-package@1.0.0",
+        "sha256": "^0.2.0",
         "socket.io": "^4.7.5",
         "socket.io-client": "^4.7.5"
     }

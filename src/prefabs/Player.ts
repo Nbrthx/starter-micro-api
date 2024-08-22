@@ -34,6 +34,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     sendEnter: (e: KeyboardEvent) => void;
     knockback: number;
     knockbackDir: Phaser.Math.Vector2;
+    bar: Phaser.GameObjects.Rectangle;
 
     constructor(scene: Phaser.Scene, x: number, y: number, char: string, main: boolean) {
         super(scene, x, y, char);
@@ -69,7 +70,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.weaponHitbox = new Hitbox(scene, this, 0, 0, 'circle', 12)
 
         this.healthBar = this.scene.add.rectangle(0, -9, 20, 2, 0x33ff66)
-        const bar = this.scene.add.rectangle(0, -9, 20, 2, 0x777777)
+        this.bar = this.scene.add.rectangle(0, -9, 20, 2, 0x777777)
+        this.healthBar.setVisible(false)
+        this.bar.setVisible(false)
 
         this.playerChat = new TextBox(this.scene, 0, -20)
 
@@ -80,12 +83,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         }).setOrigin(0.5, 0.5).setResolution(5)
 
         this.container = this.scene.add.container(0, 0, [
-            this.playerName, this.head, this.outfit, this.weapon, this.weaponHitbox, bar, this.healthBar, this.playerChat
+            this.playerName, this.head, this.outfit, this.weapon, this.weaponHitbox, this.bar, this.healthBar, this.playerChat
         ])
         this.container.setDepth(100)
 
         if(main){
-            (this.container.list[0] as Phaser.GameObjects.Text).setText(this.scene.registry.get('username'))
+            this.playerName.setText(this.scene.registry.get('username'))
 
             const sendBtn = document.getElementById('btn-send');
             const chatInput = document.getElementById('chat') as HTMLInputElement;
