@@ -13,8 +13,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     weapon: Phaser.GameObjects.Sprite;
     weaponHitbox: Hitbox;
     damaged: boolean;
-    heart: number;
+    health: number;
     enemyState: number;
+    healthBar: Phaser.GameObjects.Rectangle;
+    bar: Phaser.GameObjects.Rectangle;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'enemy');
@@ -28,23 +30,26 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.attackArea = new Hitbox(this.scene, this, -8, -8, 'circle', 24)
 
-        this.weapon = this.scene.add.sprite(0, 0, 'sword')
-        this.weapon.setOrigin(0.4, 0.5)
+        this.weapon = this.scene.add.sprite(0, 0, 'axe')
+        this.weapon.setOrigin(0.1, 0.5)
 
         this.weaponHitbox = new Hitbox(this.scene, this, 0, 0, 'circle', 12)
 
+        this.healthBar = this.scene.add.rectangle(0, -9, 20, 2, 0xff4455)
+        this.bar = this.scene.add.rectangle(0, -9, 20, 2, 0x777777)
+
         this.enemyState = 0
         this.damaged = false
-        this.heart = 200
+        this.health = 200
 
-        this.enemyName = this.scene.add.text(0,-12, 'Enemy', {
+        this.enemyName = this.scene.add.text(0,-13, 'Enemy', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
             stroke: '#000000', strokeThickness: 1,
             align: 'center'
         }).setOrigin(0.5, 0.5).setResolution(5)
 
         this.container = this.scene.add.container(0, 0, [
-            this.enemyName, this.attackArea, this.weapon, this.weaponHitbox
+            this.enemyName, this.attackArea, this.weapon, this.weaponHitbox, this.bar, this.healthBar
         ])
 
         this.scene.events.on('postupdate', () => {
@@ -73,7 +78,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.weaponHitbox.disableBody()
         }
 
-        this.enemyName.text = 'Enemy '+this.heart
+        this.enemyName.text = 'Penebang Liar'
 
         if(this.weapon.anims.isPlaying) this.weapon.setVisible(true)
         else this.weapon.setVisible(false)
@@ -88,6 +93,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
 
         this.setDepth(this.y-4)
+        this.healthBar.setSize(20*this.health/200, 2)
+        this.healthBar.setX(-10-10*this.health/-200)
     }
 
     changeState(){
@@ -108,7 +115,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         if(this.enemyState == 1) return
 
         this.weapon.visible = true;
-        this.weapon.play('attack', true)
+        this.weapon.play('attack-axe', true)
         this.weapon.rotation = Phaser.Math.Angle.Between(this.x, this.y, x, y)
         let dirX = Math.cos(this.weapon.rotation)*14
         let dirY = Math.sin(this.weapon.rotation)*14

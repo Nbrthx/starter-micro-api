@@ -1,5 +1,4 @@
 import { Scene } from 'phaser';
-import { hamemayu } from './Levels';
 
 const head = ['basic', 'blue', 'green', 'brown', 'women', 'women-purple', 'women-red']
 const outfit = ['basic', 'blue', 'green', 'brown', 'women-purple']
@@ -65,11 +64,16 @@ export class Preloader extends Scene
         ['ember', 'kayu', 'pohon', 'sekop', 'sword'].forEach(i => {
             this.load.image('item-'+i, 'items/'+i+'.png')
         })
+
         this.load.spritesheet('sword', 'sword.png', { frameWidth: 48, frameHeight: 48 });
+        this.load.spritesheet('axe', 'axe.png', { frameWidth: 32, frameHeight: 32 });
 
         ['lobby', 'hamemayu', 'hutan', 'eling', 'kolam', 'rukun', 'rumah'].forEach(i => {
             this.load.tilemapTiledJSON(i, 'tilemap/map-'+i+'.json');
         })
+
+        // Audio
+        this.load.audio('step', 'audio/step.mp3')
     }
 
     create () {
@@ -189,6 +193,13 @@ export class Preloader extends Scene
         this.anims.create({
             key: 'attack',
             frames: this.anims.generateFrameNumbers('sword', {
+                frames: [0,0,1,2,3,4,5,5,5,5,5,5]
+            }),
+            frameRate: 30,
+        });
+        this.anims.create({
+            key: 'attack-axe',
+            frames: this.anims.generateFrameNumbers('axe', {
                 frames: [0,0,1,2,3,4,5,5,5,5,5,5]
             }),
             frameRate: 30,

@@ -236,14 +236,6 @@ export class Game extends Scene {
                     },
                 );
                 if (questBox) questBox.style.display = "none";
-
-                console.log(this.inventory.setItem("pohon", 12));
-                console.log(this.inventory.setItem("ember", 60));
-                const itemAmount = document.getElementById("item-amount");
-                if (itemAmount)
-                    itemAmount.innerHTML =
-                        this.inventory.items[this.inventory.current].amount +
-                        "x";
             };
             this.questCancelEvent = () => {
                 if (questBox) questBox.style.display = "none";

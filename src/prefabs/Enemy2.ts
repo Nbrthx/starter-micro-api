@@ -11,8 +11,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     dir: Phaser.Math.Vector2;
     weapon: Phaser.GameObjects.Image;
     damaged: boolean;
-    heart: number;
+    health: number;
     enemyState: number;
+    healthBar: Phaser.GameObjects.Rectangle;
+    bar: Phaser.GameObjects.Rectangle;
 
     constructor(scene: Phaser.Scene, x: number, y: number) {
         super(scene, x, y, 'enemy2');
@@ -26,19 +28,22 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.weapon = this.scene.add.image(0, 0, 'ketapel')
         this.weapon.setOrigin(0.5, 0.5)
+        
+        this.healthBar = this.scene.add.rectangle(0, -9, 20, 2, 0xff4455)
+        this.bar = this.scene.add.rectangle(0, -9, 20, 2, 0x777777)
 
         this.enemyState = 0
         this.damaged = false
-        this.heart = 100
+        this.health = 100
 
-        this.enemyName = this.scene.add.text(0,-12, 'Enemy', {
+        this.enemyName = this.scene.add.text(0,-13, 'Enemy', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
             stroke: '#000000', strokeThickness: 1,
             align: 'center'
         }).setOrigin(0.5, 0.5).setResolution(5)
 
         this.container = this.scene.add.container(0, 0, [
-            this.enemyName, this.weapon
+            this.enemyName, this.weapon, this.bar, this.healthBar
         ])
 
         this.scene.events.on('postupdate', () => {
@@ -56,10 +61,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.anims.play('enemy2-idle', true)
 
-        this.enemyName.text = 'Enemy '+this.heart
+        this.enemyName.text = 'Perusak Air Tanah'
 
         this.setDepth(this.y-4)
         this.container.setDepth(this.y-3)
+        this.healthBar.setSize(20*this.health/100, 2)
+        this.healthBar.setX(-10-10*this.health/-100)
     }
 
     changeState(){

@@ -51,7 +51,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.anims.play('enemy3-idle', true)
 
-        this.enemyName.text = 'Enemy'
+        this.enemyName.text = 'Penimbun Bahan Bangunan'
 
         this.setDepth(this.y-4)
         this.container.setDepth(this.y-3)

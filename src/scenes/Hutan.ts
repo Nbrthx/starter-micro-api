@@ -9,6 +9,7 @@ import { Quest } from '../components/Quest'
 import Plant from '../prefabs/Plant';
 import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
+import { Popup } from '../components/Popup';
 
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -72,6 +73,8 @@ export class Game extends Scene {
 
         // Player
         this.player = new Player(this, coor(5), coor(8), 'char', true)
+        this.player.healthBar.setVisible(true)
+        this.player.bar.setVisible(true)
         this.camera.startFollow(this.player, true, 0.05, 0.05)
                     
         this.player.head.setTexture('green-head')
@@ -140,7 +143,7 @@ export class Game extends Scene {
         this.physics.add.overlap(this.enemy, this.player.weaponHitbox, () => {
             if(!this.enemy.damaged){
                 this.enemy.damaged = true
-                this.enemy.heart -= 5
+                this.enemy.health -= 5
 
                 this.add.tween({
                     targets: this.enemy,
@@ -151,7 +154,7 @@ export class Game extends Scene {
                     yoyo: true
                 })
 
-                if(this.enemy.heart <= 0){
+                if(this.enemy.health <= 0){
                     this.enemy.destroy()
                 }
                 setTimeout(() => this.enemy.damaged = false, 300)
@@ -210,6 +213,7 @@ export class Game extends Scene {
         this.counter++
         if(this.counter >= 60){
             if(this.enemy.active) this.enemy.destroy()
+            Popup.misionComplete('Misi "Memayu Hayuning Bawana" Selesai')
             this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
                 if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
                 this.scene.start('Hamemayu', { from: 'hutan' })

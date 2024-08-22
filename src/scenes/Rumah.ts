@@ -9,6 +9,7 @@ import { Trees } from '../components/Trees';
 import { Quest } from '../components/Quest';
 import { Home } from '../prefabs/Home';
 import { Enemy } from '../prefabs/Enemy3';
+import { Popup } from '../components/Popup';
 
 const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -88,7 +89,7 @@ export class Game extends Scene {
         // Enemy
         this.bullets = this.add.group()
 
-        this.enemy = new Enemy(this, coor(7), coor(9))
+        this.enemy = new Enemy(this, coor(8), coor(9))
 
         // Quest
         this.counter = 0
@@ -173,6 +174,8 @@ export class Game extends Scene {
         if(main && (!this.player || !this.player.active)){
             // Player
             this.player = new Player(this, this.spawnPoint(this.from).x, this.spawnPoint(this.from).y, 'char', true)
+            this.player.healthBar.setVisible(true)
+            this.player.bar.setVisible(true)
                     
             this.player.head.setTexture('green-head')
             this.player.id = player.id
@@ -206,5 +209,6 @@ export class Game extends Scene {
 
     addCounter(){
         this.counter++;
+        Popup.misionComplete('Anda Berkontribusi Mewujudkan "Rukun Agawe Santoso"')
     }
 }

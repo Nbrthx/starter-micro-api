@@ -35,6 +35,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     knockback: number;
     knockbackDir: Phaser.Math.Vector2;
     bar: Phaser.GameObjects.Rectangle;
+    step: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
 
     constructor(scene: Phaser.Scene, x: number, y: number, char: string, main: boolean) {
         super(scene, x, y, char);
@@ -76,7 +77,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.playerChat = new TextBox(this.scene, 0, -20)
 
-        this.playerName = this.scene.add.text(0,-14, 'other', {
+        this.step = this.scene.sound.add('step')
+        this.step.setRate(2)
+
+        this.playerName = this.scene.add.text(0,-13, 'other', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
             stroke: '#000000', strokeThickness: 1,
             align: 'center'
@@ -171,6 +175,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         if(this.dir.y != 0 || this.dir.x != 0){
             this.lastDir.x = this.dir.x
             this.lastDir.y = this.dir.y
+            if(!this.step.isPlaying) this.step.play()
             if(this.dir.y < 0){
                 //this.anims.play('run-up', true)
                 this.head.anims.play('run-up-'+this.head.texture.key, true)

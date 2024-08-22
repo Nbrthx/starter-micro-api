@@ -10,6 +10,7 @@ import Plant from '../prefabs/Plant';
 import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
 import { Bullet } from '../prefabs/Bullet';
+import { Popup } from '../components/Popup';
 
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -74,6 +75,8 @@ export class Game extends Scene {
 
         // Player
         this.player = new Player(this, coor(5), coor(8), 'char', true)
+        this.player.healthBar.setVisible(true)
+        this.player.bar.setVisible(true)
         this.camera.startFollow(this.player, true, 0.05, 0.05)
                     
         this.player.head.setTexture('green-head')
@@ -135,7 +138,7 @@ export class Game extends Scene {
         this.physics.add.overlap(this.enemy, this.player.weaponHitbox, () => {
             if(!this.enemy.damaged){
                 this.enemy.damaged = true
-                this.enemy.heart -= 5
+                this.enemy.health -= 5
 
                 this.enemy.x = Math.floor(Math.random()*16*17)+16*2
                 this.enemy.y = Math.floor(Math.random()*16*10)+16*3
@@ -149,7 +152,7 @@ export class Game extends Scene {
                     yoyo: true
                 })
 
-                if(this.enemy.heart <= 0){
+                if(this.enemy.health <= 0){
                     this.enemy.destroy()
                 }
                 setTimeout(() => this.enemy.damaged = false, 300)
@@ -211,6 +214,7 @@ export class Game extends Scene {
         this.counter++
         if(this.counter >= 198){
             if(this.enemy.active) this.enemy.destroy()
+            Popup.misionComplete('Misi "Eling lan Waspodo" Selesai')
             this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
                 if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
                 this.scene.start('Eling', { from: 'kolam' })

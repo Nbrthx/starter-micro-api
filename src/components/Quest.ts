@@ -21,7 +21,7 @@ export class Quest {
           Karena itu misi kamu saat ini adalah membangun embung. <br />
       </p>`,
       
-      `<h2>"Gotong Royong Agawe Santoso"</h2>
+      `<h2>"Rukun Agawe Santoso"</h2>
       <p>
           Hidup diunia ini tidak sendirian. <br/>
           Kita hidup bersama banyak manusia lain. <br />

@@ -57,7 +57,7 @@ export class Inventory {
         const item = this.items.find(v => v.name == name)
         if(item){
             item.amount += amount
-            this.socket.emit('update-inventory', 'add', name, amount)
+            this.socket.emit('inventory-update', 'add', name, amount)
             return true
         }
         return false
@@ -67,7 +67,7 @@ export class Inventory {
         const item = this.items.find(v => v.name == name)
         if(item){
             item.amount = amount
-            this.socket.emit('update-inventory', 'set', name, amount)
+            this.socket.emit('inventory-update', 'set', name, amount)
             return true
         }
         return false
@@ -77,7 +77,7 @@ export class Inventory {
         const item = this.items.find(v => v.name == name)
         if(item && item.amount >= amount){
             item.amount -= amount
-            this.socket.emit('update-inventory', 'sub', name, amount)
+            this.socket.emit('inventory-update', 'sub', name, amount)
             return true
         }
         return false
