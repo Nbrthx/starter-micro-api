@@ -6,6 +6,7 @@ import { Network } from '../components/Network';
 import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
 import { Trees } from '../components/Trees';
+import { Stats } from '../components/Stats';
 
 const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -32,6 +33,8 @@ export class Game extends Scene {
     from: string;
     inventory: Inventory;
     fog: Phaser.GameObjects.TileSprite;
+    backsound: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
+    stats: Stats;
 
     constructor () {
         super('Lobby');
@@ -56,6 +59,12 @@ export class Game extends Scene {
         this.camera = this.cameras.main;
         this.socket = this.registry.get('socket')
 
+        this.backsound = this.sound.add('backsound')
+        this.backsound.setVolume(0.5)
+        this.backsound.setLoop(true)
+        this.sound.stopAll()
+        this.backsound.play()
+
         // Fog
         this.fog = this.add.tileSprite(0, 4*16, this.physics.world.bounds.width, this.physics.world.bounds.height, 'fog')
         this.fog.setAlpha(0.1)
@@ -76,6 +85,10 @@ export class Game extends Scene {
 
         // Others
         this.players = this.add.group()
+
+        
+        // Stats
+        this.stats = new Stats(this.socket)
 
         // Hitbox
         this.weaponHitbox = this.add.group()

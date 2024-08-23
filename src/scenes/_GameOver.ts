@@ -15,6 +15,8 @@ export class GameOver extends Scene
     {
         this.camera = this.cameras.main
         this.camera.setBackgroundColor(0x110900);
+        
+        this.sound.stopAll()
 
         this.gameover_text = this.add.text(this.scale.width/2, 360, 'Kamu Matiii...', {
             fontFamily: 'Arial Black', fontSize: 48, color: '#ffffff',

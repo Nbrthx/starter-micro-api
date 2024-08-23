@@ -16,8 +16,6 @@ export class Network {
         this.socket = scene.socket;
         this.map = scene.map;
 
-        const coor: Function = (x: number, xx: number = 0) => x*16+xx;
-
         this.socket.on('join', (data: PlayerData[]) => {
             data.forEach((player: PlayerData) => {
                 if(player.id == this.socket.id){
@@ -57,9 +55,8 @@ export class Network {
                         existingPlayer.dir.x = parseInt(player.x - existingPlayer.x+'')
                         existingPlayer.dir.y = parseInt(player.y - existingPlayer.y+'')
                         existingPlayer.dir.normalize()
-                        existingPlayer.playerName.setText(player.username)
+                        existingPlayer.playerName.setText(player.username+' Lvl'+player.level)
                         existingPlayer.update()
-                        console.log(player.x, player.y)
                     }
                 }
             })
@@ -92,7 +89,7 @@ export class Network {
                 username: this.scene.registry.get('username'),
                 x: x,
                 y: y,
-                chat: ''
+                level: this.scene.stats.getLevel()
             }
             this.socket.emit('join', data)
         }
@@ -104,6 +101,7 @@ export class Network {
             x: x,
             y: y,
             dir: dir,
+            level: this.scene.stats.getLevel()
         })
     }
 

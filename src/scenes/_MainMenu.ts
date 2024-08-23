@@ -2,7 +2,7 @@ import { Scene, GameObjects } from 'phaser';
 import io from 'socket.io-client'
 import { getPasscolor, readPasscolor, downloadImg } from '../components/Passcolor';
 
-const socket = io('http://localhost:3000', { transports: ['websocket'] })
+const socket = io('https://3000-nbrthx-starter-micro-api-sdy9i5w2fc.us1.codeanyapp.com/', { transports: ['websocket'] })
 
 export class MainMenu extends Scene
 {
@@ -59,11 +59,11 @@ export class MainMenu extends Scene
                 loginBox.style.display = 'none'
             }
             else{
-                alert('Akun tidak ditemukan')
+                alert('Akun tidak ditemukan atau perangkat lain sudah login. Logout perangkat lain lalu refresh.')
             }
         }
 
-        let hash = localStorage.getItem('hash')
+        let hash = localStorage.getItem('hash') as string
         if(hash) socket.emit('login', hash, (data: string) => loginCallback(data, hash)) 
 
         file.onchange = e => readPasscolor(((e.target as HTMLInputElement).files as FileList)[0], text => {
@@ -84,6 +84,10 @@ export class MainMenu extends Scene
         const registerHandler = () => {
             if(elmUsername.value.length < 4){
                 alert('Nama harus lebih dari 3 huruf')
+                return
+            }
+            if(elmUsername.value.length >= 16){
+                alert('Nama harus kurang dari 16 huruf')
                 return
             }
             let text = randomString(64)

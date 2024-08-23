@@ -8,7 +8,7 @@ export interface PlayerData{
     username: string;
     x: number;
     y: number;
-    health: number;
+    level: number;
 }
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
@@ -78,6 +78,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.playerChat = new TextBox(this.scene, 0, -20)
 
         this.step = this.scene.sound.add('step')
+        this.step.setVolume(0.4)
         this.step.setRate(2)
 
         this.playerName = this.scene.add.text(0,-13, 'other', {
@@ -92,7 +93,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.container.setDepth(100)
 
         if(main){
-            this.playerName.setText(this.scene.registry.get('username'))
+            this.playerName.setText(this.scene.registry.get('username')+' lvl.'+(this.scene as Game).stats.getLevel())
+            this.playerName.setColor('#aaffbb')
 
             const sendBtn = document.getElementById('btn-send');
             const chatInput = document.getElementById('chat') as HTMLInputElement;
@@ -210,6 +212,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         else this.body?.velocity.normalize().scale(80)
 
         this.container.setDepth(this.y-4)
+        this.playerName.setText(this.scene.registry.get('username')+' lvl.'+(this.scene as Game).stats.getLevel())
         this.healthBar.setSize(20*this.health/100, 2)
         this.healthBar.setX(-10-10*this.health/-100)
     }

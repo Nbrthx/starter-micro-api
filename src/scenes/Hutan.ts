@@ -10,6 +10,7 @@ import Plant from '../prefabs/Plant';
 import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
 import { Popup } from '../components/Popup';
+import { Stats } from '../components/Stats';
 
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -36,6 +37,7 @@ export class Game extends Scene {
     plants: Plant[];
     inventory: Inventory;
     counter: number;
+    stats: Stats;
 
     constructor () {
         super('Hutan');
@@ -70,6 +72,10 @@ export class Game extends Scene {
 
         // Enemy
         this.enemy = new Enemy(this, coor(13), coor(8))
+
+        
+        // Stats
+        this.stats = new Stats(this.socket)
 
         // Player
         this.player = new Player(this, coor(5), coor(8), 'char', true)
@@ -218,6 +224,7 @@ export class Game extends Scene {
                 if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
                 this.scene.start('Hamemayu', { from: 'hutan' })
             })
+            this.stats.addXp(1)
             this.inventory.addItem('kayu', 1)
             this.quest.completeQuest(0)
         }

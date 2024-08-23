@@ -1,5 +1,6 @@
 const { Server } = require('socket.io')
 const sha256 = require('sha256')
+const mysql = require('mysql');
 // const { createServer } = require('http')
 // const express = require("express")
 
@@ -52,6 +53,29 @@ const items = {
   kayu: 2
 }
 
+var connection = mysql.createConnection({
+  host     : 'sql12.freesqldatabase.com',
+  user     : 'sql12727379',
+  password : '8iHptZS1sz',
+  database : 'sql12727379'
+});
+connection.query('SELECT * FROM accounts', function (error, results, fields) {
+      if (error) throw error;
+      const data = results
+      console.log('The solution is: ', data);
+
+      data.forEach(v => {
+        accounts.push({
+          username: v.username,
+          hash: v.hash,
+          head: JSON.parse(v.head),
+          outfit: JSON.parse(v.outfit),
+          xp: v.xp,
+          inventory: JSON.parse(v.inventory)
+        })
+      })
+    })
+
 // Socket io
 io.on('connection', (socket) => {
   console.log('a user '+socket.id+' connected')
@@ -77,13 +101,30 @@ io.on('connection', (socket) => {
     }
     accounts.push(account)
     callback(true)
+
+    connection.query('INSERT INTO accounts VALUES ("'+account.username+
+    '", "'+account.hash+
+    '", "'+JSON.stringify(account.head)+
+    '", "'+JSON.stringify(account.outfit)+
+    '", '+account.xp+
+    ', "'+JSON.stringify(account.inventory)+'")', function (error, results, fields) {
+      if (error) throw error;
+    })
   })
 
   socket.on('login', (text, callback) => {
     const account = accounts.find(v => v.hash == sha256(text))
+    console.log(clients, account)
     if(account){
-      clients.set(socket.id, account.username)
-      callback(account.username)
+      let hasLogin = false
+      clients.forEach(v => {
+        hasLogin = v == account.username
+      })
+      if(hasLogin) callback(false)
+      else{
+        clients.set(socket.id, account.username)
+        callback(account.username)
+      }
     }
     else callback(false)
   })
@@ -159,6 +200,22 @@ io.on('connection', (socket) => {
     if(operation == 'add') account.inventory[items[name]] += amount
     else if(operation == 'sub') account.inventory[items[name]] -= amount
     else if(operation == 'set') account.inventory[items[name]] = amount
+
+    connection.query('UPDATE accounts SET inventory = "'+JSON.stringify(account.inventory)+'" WHERE username="'+account.username+'"', function (error, results, fields) {
+      if (error) throw error;
+    })
+  })
+
+  // Experience
+  socket.on('xp-update', (amount) => {
+    const account = accounts.find(v => v.username == clients.get(socket.id))
+    
+    if(!account) return
+    account.xp += amount
+
+    connection.query('UPDATE accounts SET xp = '+account.xp+' WHERE username="'+account.username+'"', function (error, results, fields) {
+      if (error) throw error;
+    })
   })
 
   // Map Rumah
@@ -183,6 +240,7 @@ io.on('connection', (socket) => {
       }
       // You might also want to check if the room is empty and clean it up if needed
     });
+    clients.delete(socket.id)
   })
 })
 

@@ -7,6 +7,7 @@ import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
 import { Trees } from '../components/Trees';
 import { Quest } from '../components/Quest';
+import { Stats } from '../components/Stats';
 
 const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -36,6 +37,7 @@ export class Game extends Scene {
     quest: Quest;
     questGoEvent: EventListener;
     questCancelEvent: EventListener;
+    stats: Stats;
 
     constructor () {
         super('Rukun');
@@ -74,7 +76,8 @@ export class Game extends Scene {
         Trees.tree1(this, tree1.objects)
 
         // NPCs
-        this.npc = this.physics.add.sprite(coor(10, 8), coor(6, 8), 'char')
+        this.npc = this.physics.add.sprite(coor(10, 8), coor(6, 8), 'npc')
+        this.npc.setFlipX(true)
 
         // Others
         this.players = this.add.group()
@@ -94,6 +97,9 @@ export class Game extends Scene {
 
         // Quest
         this.quest = new Quest()
+        
+        // Stats
+        this.stats = new Stats(this.socket)
 
         // Inventory
         this.inventory = new Inventory(this.socket)

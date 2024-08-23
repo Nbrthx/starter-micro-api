@@ -10,6 +10,7 @@ import { Quest } from '../components/Quest';
 import { Home } from '../prefabs/Home';
 import { Enemy } from '../prefabs/Enemy3';
 import { Popup } from '../components/Popup';
+import { Stats } from '../components/Stats';
 
 const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -39,6 +40,7 @@ export class Game extends Scene {
     bullets: Phaser.GameObjects.Group;
     homes: Home[];
     counter: number;
+    stats: Stats;
 
     constructor () {
         super('Rumah');
@@ -93,6 +95,9 @@ export class Game extends Scene {
 
         // Quest
         this.counter = 0
+        
+        // Stats
+        this.stats = new Stats(this.socket)
 
         // Home
         this.homes = []
@@ -210,5 +215,6 @@ export class Game extends Scene {
     addCounter(){
         this.counter++;
         Popup.misionComplete('Anda Berkontribusi Mewujudkan "Rukun Agawe Santoso"')
+        this.stats.addXp(1)
     }
 }

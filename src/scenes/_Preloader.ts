@@ -43,6 +43,9 @@ export class Preloader extends Scene
         this.load.spritesheet('dynamic-home', 'property/home.png', { frameWidth: 48, frameHeight: 48 });
 
         this.load.spritesheet('char', 'character/full.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('npc', 'character/npc.png', { frameWidth: 16, frameHeight: 16 });
+        this.load.spritesheet('menu', 'character/menu.png', { frameWidth: 16, frameHeight: 16 });
+
         this.load.spritesheet('grow-tree', 'property/grow-tree.png', { frameWidth: 32, frameHeight: 32 });
 
         for(var i of head){
@@ -74,6 +77,7 @@ export class Preloader extends Scene
 
         // Audio
         this.load.audio('step', 'audio/step.mp3')
+        this.load.audio('backsound', 'audio/backsound.mp3')
     }
 
     create () {

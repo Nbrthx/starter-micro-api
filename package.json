@@ -27,6 +27,7 @@
         "express": "^4.19.2",
         "fs": "^0.0.1-security",
         "jsdom": "^24.1.1",
+        "mysql": "^2.18.1",
         "phaser": "^3.80.1",
         "phaser3spectorjs": "npm:empty-npm-package@1.0.0",
         "sha256": "^0.2.0",
