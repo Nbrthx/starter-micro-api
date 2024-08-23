@@ -88,6 +88,7 @@ export class Game extends Scene {
 
         // NPCs
         this.npc = this.physics.add.sprite(coor(6, 8), coor(5, 8), "npc");
+        this.npc.play('npc-idle')
         this.npc.setFlipX(true)
 
         // Others
@@ -209,7 +210,7 @@ export class Game extends Scene {
                 this.npc,
                 this.player.weaponHitbox,
                 (_obj1, _player) => {
-                    this.quest.requestQuest(0);
+                    this.quest.requestQuest(0, this.inventory, this.stats);
 
                     const questGo = document.getElementById("go");
                     const questCancel = document.getElementById("cancel");

@@ -2,7 +2,7 @@ import { Scene, GameObjects } from 'phaser';
 import io from 'socket.io-client'
 import { getPasscolor, readPasscolor, downloadImg } from '../components/Passcolor';
 
-const socket = io('https://3000-nbrthx-starter-micro-api-sdy9i5w2fc.us1.codeanyapp.com/', { transports: ['websocket'] })
+const socket = io('http://localhost:3000', { transports: ['websocket'] })
 
 export class MainMenu extends Scene
 {

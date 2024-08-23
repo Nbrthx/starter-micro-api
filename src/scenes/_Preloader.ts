@@ -155,6 +155,16 @@ export class Preloader extends Scene
             });
         }
 
+        // NPC
+        this.anims.create({
+            key: 'npc-idle',
+            frames: this.anims.generateFrameNumbers('npc', {
+                frames: [0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,1,2,1,2]
+            }),
+            frameRate: 8,
+            repeat: -1
+        });
+
         // Enemy2
         this.anims.create({
             key: 'enemy-idle',

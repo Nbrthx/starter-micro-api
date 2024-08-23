@@ -101,7 +101,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.enemyState++
         if(this.enemyState == 1) setTimeout(() => this.changeState(), 5000)
         else if(this.enemyState == 2){
-            setTimeout(() => this.changeState(), 3000)
+            setTimeout(() => this.changeState(), 4000)
             this.setTint(0xff0000)
         }
         else{ 

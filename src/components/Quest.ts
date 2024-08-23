@@ -1,3 +1,6 @@
+import { Inventory } from "./Inventory";
+import { Stats } from "./Stats";
+
 export class Quest {
 
   quests: string[];
@@ -36,14 +39,21 @@ export class Quest {
     if(!this.quests[index]) ReadableStreamDefaultController
   }
 
-  requestQuest(index: number){
+  requestQuest(index: number, inventory: Inventory, stats: Stats){
     if(!this.quests[index]) return
 
     const questBox = document.getElementById('quest-box')
+    const level = stats.getLevel()
+
+    const needItem = index == 0 ? inventory.items[1].amount >= 15 && inventory.items[2].amount >= 60 : true
 
     if(questBox){
-      const completed = '<button id="go">Ayo</button><button id="cancel">Nggak Dulu</button>'
-      questBox.innerHTML = this.quests[index]+completed
+      const easy = needItem ? '<button id="go" value="easy">Mudah</button>' : '<button id="go" disabled value="easy">Mudah</button>'
+      const normal = level > 3 && needItem ? '<button id="go" value="normal">Normal</button>' : '<button id="go" disabled value="normal">Normal (lvl.3)</button>'
+      const hard = level > 5 && needItem ? '<button id="go" value="hard">Syulit</button>' : '<button id="go" disabled value="hard">Syulit (lvl.5)</button>'
+      const misi = index == 2 ? '<button id="go">Ayo</button>' : easy+normal+hard
+      const cancel = '<button id="cancel">Nggak Dulu</button>'
+      questBox.innerHTML = this.quests[index]+misi+cancel
     }
   }
 }
