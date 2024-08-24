@@ -15,11 +15,14 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     enemyState: number;
     healthBar: Phaser.GameObjects.Rectangle;
     bar: Phaser.GameObjects.Rectangle;
+    difficulty: string;
+    maxHealth: number;
 
-    constructor(scene: Phaser.Scene, x: number, y: number) {
+    constructor(scene: Phaser.Scene, x: number, y: number, difficulty: string) {
         super(scene, x, y, 'enemy2');
 
         this.scene = scene
+        this.difficulty = difficulty
         
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
@@ -34,13 +37,24 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.enemyState = 0
         this.damaged = false
-        this.health = 100
+        this.maxHealth = 100
 
-        this.enemyName = this.scene.add.text(0,-13, 'Enemy', {
+        this.enemyName = this.scene.add.text(0,-13, 'Perusak Air Tanah lvl.1', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
             stroke: '#000000', strokeThickness: 1,
             align: 'center'
         }).setOrigin(0.5, 0.5).setResolution(5)
+
+        if(this.difficulty == 'normal'){
+            this.maxHealth = 150
+            this.enemyName.setText('Perusak Air Tanah lvl.2')
+        }
+        else if(this.difficulty == 'hard'){
+            this.maxHealth = 200
+            this.enemyName.setText('Perusak Air Tanah lvl.3')
+        }
+
+        this.health = this.maxHealth
 
         this.container = this.scene.add.container(0, 0, [
             this.enemyName, this.weapon, this.bar, this.healthBar
@@ -61,24 +75,32 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.anims.play('enemy2-idle', true)
 
-        this.enemyName.text = 'Perusak Air Tanah'
-
         this.setDepth(this.y-4)
         this.container.setDepth(this.y-3)
-        this.healthBar.setSize(20*this.health/100, 2)
-        this.healthBar.setX(-10-10*this.health/-100)
+        this.healthBar.setSize(20*this.health/this.maxHealth, 2)
+        this.healthBar.setX(-10-10*this.health/-this.maxHealth)
     }
 
     changeState(){
         this.enemyState++
-        if(this.enemyState == 1) setTimeout(() => this.changeState(), 6000)
+
+        let stateTime = [6000, 2000, 5000]
+
+        if(this.difficulty == 'normal'){
+            stateTime = [5000, 3000, 4000]
+        }
+        else if(this.difficulty == 'hard'){
+            stateTime = [Math.floor(Math.random()*3000)+4000, 4000, Math.floor(Math.random()*3000)+3000]
+        }
+
+        if(this.enemyState == 1) setTimeout(() => this.changeState(), stateTime[0])
         else if(this.enemyState == 2){
-            setTimeout(() => this.changeState(), 2000)
+            setTimeout(() => this.changeState(), stateTime[1])
             this.setTint(0xff0000)
         }
         else{ 
             this.enemyState = 0
-            setTimeout(() => this.changeState(), 5000)
+            setTimeout(() => this.changeState(), stateTime[2])
             this.setTint(0xffffff)
         }
     }

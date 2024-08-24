@@ -76,6 +76,12 @@ connection.query('SELECT * FROM accounts', function (error, results, fields) {
       })
     })
 
+setInterval(() => {
+  connection.query('SELECT 1', function (error, results, fields) {
+    if (error) throw error;
+  })
+}, 5000)
+
 // Socket io
 io.on('connection', (socket) => {
   console.log('a user '+socket.id+' connected')

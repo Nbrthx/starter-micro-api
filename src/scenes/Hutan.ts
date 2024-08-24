@@ -38,10 +38,16 @@ export class Game extends Scene {
     inventory: Inventory;
     counter: number;
     stats: Stats;
+    difficulty: string;
 
     constructor () {
         super('Hutan');
         this.map = 'hutan'
+        this.difficulty = 'easy'
+    }
+
+    init(props: { difficulty: string }){
+        this.difficulty = props.difficulty
     }
 
     create () {
@@ -71,7 +77,7 @@ export class Game extends Scene {
         this.weaponHitbox = this.add.group()
 
         // Enemy
-        this.enemy = new Enemy(this, coor(13), coor(8))
+        this.enemy = new Enemy(this, coor(13), coor(8), this.difficulty)
 
         
         // Stats
@@ -115,11 +121,24 @@ export class Game extends Scene {
             if(cooldown){
                 const { x, y } = this.player
                 const enemy = ((parent as Hitbox).parent as Enemy)
+                let reflectTime = [200, 400]
+                let cooldownTime = [1000, 1500]
+
+                if(this.difficulty == 'normal'){
+                    reflectTime = [100, 300]
+                    cooldownTime = [800, 1200]
+                }
+                else if(this.difficulty == 'hard'){
+                    reflectTime = [100, 200]
+                    cooldownTime = [600, 1000]
+                }
+
                 setTimeout(() => {
                     enemy.attack(x, y)
-                }, enemy.enemyState == 2? 200 : 400)
+                }, enemy.enemyState == 2? reflectTime[0] : reflectTime[1])
+
                 cooldown = false
-                setTimeout(() => cooldown = true, enemy.enemyState == 2? 1000 : 2000)
+                setTimeout(() => cooldown = true, enemy.enemyState == 2? cooldownTime[0] : cooldownTime[1])
                 
             }
         })

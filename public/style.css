@@ -199,7 +199,7 @@ h1 {
     display: none;
 }
 
-#go, #cancel {
+#go, #go2, #go3, #cancel {
     padding: 10px 20px;
     border: none;
     margin-top: 8px;
@@ -213,7 +213,7 @@ h1 {
     background: #ff7788;
 }
 
-#go:hover, #go:focus, #cancel:hover, #cancel:focus {
+#go:hover, #go:focus, #go2:hover, #go2:focus, #go3:hover, #go3:focus, #cancel:hover, #cancel:focus {
     background: #aaaaaa;
 }
 

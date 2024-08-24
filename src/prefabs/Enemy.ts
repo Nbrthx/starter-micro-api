@@ -17,11 +17,15 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     enemyState: number;
     healthBar: Phaser.GameObjects.Rectangle;
     bar: Phaser.GameObjects.Rectangle;
+    difficulty: string;
+    speed: number[];
+    maxHealth: number;
 
-    constructor(scene: Phaser.Scene, x: number, y: number) {
+    constructor(scene: Phaser.Scene, x: number, y: number, difficulty: string = 'easy') {
         super(scene, x, y, 'enemy');
 
         this.scene = scene
+        this.difficulty = difficulty
         
         this.scene.add.existing(this)
         this.scene.physics.add.existing(this)
@@ -38,15 +42,30 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         this.healthBar = this.scene.add.rectangle(0, -9, 20, 2, 0xff4455)
         this.bar = this.scene.add.rectangle(0, -9, 20, 2, 0x777777)
 
+        this.speed = [30, 50]
+
         this.enemyState = 0
         this.damaged = false
-        this.health = 200
+        this.maxHealth = 200
 
-        this.enemyName = this.scene.add.text(0,-13, 'Enemy', {
+        this.enemyName = this.scene.add.text(0,-13, 'Penebang Liar lvl.1', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
             stroke: '#000000', strokeThickness: 1,
             align: 'center'
         }).setOrigin(0.5, 0.5).setResolution(5)
+        
+        if(difficulty == 'normal'){
+            this.speed = [40, 60]
+            this.maxHealth = 250
+            this.enemyName.setText('Penebang Liar lvl.2')
+        }
+        else if(difficulty == 'hard'){
+            this.speed = [40, 70]
+            this.maxHealth = 300
+            this.enemyName.setText('Penebang Liar lvl.3')
+        }
+        
+        this.health = this.maxHealth
 
         this.container = this.scene.add.container(0, 0, [
             this.enemyName, this.attackArea, this.weapon, this.weaponHitbox, this.bar, this.healthBar
@@ -78,8 +97,6 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.weaponHitbox.disableBody()
         }
 
-        this.enemyName.text = 'Penebang Liar'
-
         if(this.weapon.anims.isPlaying) this.weapon.setVisible(true)
         else this.weapon.setVisible(false)
 
@@ -93,8 +110,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
 
         this.setDepth(this.y-4)
-        this.healthBar.setSize(20*this.health/200, 2)
-        this.healthBar.setX(-10-10*this.health/-200)
+        this.healthBar.setSize(20*this.health/this.maxHealth, 2)
+        this.healthBar.setX(-10-10*this.health/-this.maxHealth)
     }
 
     changeState(){

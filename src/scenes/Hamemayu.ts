@@ -59,26 +59,12 @@ export class Game extends Scene {
         this.socket = this.registry.get("socket");
 
         // MAP
-        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({
-            key: "hamemayu",
-        });
-        const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage(
-            "tileset",
-            "tileset",
-        ) as Phaser.Tilemaps.Tileset;
-        this.layer1 = map.createLayer(
-            "background",
-            tileset,
-            0,
-            0,
-        ) as Phaser.Tilemaps.TilemapLayer;
-        this.layer2 = map
-            .createLayer("wall", tileset, 0, 0)
-            ?.setCollisionByExclusion([-1]) as Phaser.Tilemaps.TilemapLayer;
+        const map: Phaser.Tilemaps.Tilemap = this.make.tilemap({ key: "hamemayu" });
+        const tileset: Phaser.Tilemaps.Tileset = map.addTilesetImage("tileset", "tileset") as Phaser.Tilemaps.Tileset;
+        this.layer1 = map.createLayer("background", tileset, 0, 0,) as Phaser.Tilemaps.TilemapLayer;
+        this.layer2 = map.createLayer("wall", tileset, 0, 0)?.setCollisionByExclusion([-1]) as Phaser.Tilemaps.TilemapLayer;
         //this.layer3 = map.getObjectLayer('wall2') as Phaser.Tilemaps.ObjectLayer;
-        const home1 = map.getObjectLayer(
-            "home1",
-        ) as Phaser.Tilemaps.ObjectLayer;
+        const home1 = map.getObjectLayer("home1") as Phaser.Tilemaps.ObjectLayer;
 
         this.collider = [];
         this.collider.push(this.layer2);
@@ -139,11 +125,7 @@ export class Game extends Scene {
         this.physics.world.setBounds(0, 0, map.width * 16, map.height * 16);
 
         // Connection
-        this.network = new Network(
-            this,
-            this.spawnPoint(this.from).x,
-            this.spawnPoint(this.from).y,
-        );
+        this.network = new Network(this, this.spawnPoint(this.from).x, this.spawnPoint(this.from).y);
 
         const updatePlayer = () => {
             if (this.player) {
@@ -175,13 +157,7 @@ export class Game extends Scene {
         console.log(player);
         if (main && (!this.player || !this.player.active)) {
             // Player
-            this.player = new Player(
-                this,
-                this.spawnPoint(this.from).x,
-                this.spawnPoint(this.from).y,
-                "char",
-                true,
-            );
+            this.player = new Player(this, this.spawnPoint(this.from).x, this.spawnPoint(this.from).y, "char", true);
 
             this.player.head.setTexture("green-head");
             this.player.id = player.id;
@@ -194,32 +170,32 @@ export class Game extends Scene {
             this.physics.add.collider(this.player, this.collider);
 
             // Enterence
-            this.physics.add.overlap(
-                this.enterance[0],
-                this.player,
-                (_obj1, _player) => {
-                    this.network.changeMap("lobby");
-                    this.removeListener();
-                    this.scene.start("Lobby", { from: "hamemayu" });
-                },
-            );
+            this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
+                this.network.changeMap("lobby");
+                this.removeListener();
+                this.scene.start("Lobby", { from: "hamemayu" });
+            });
 
             // NPCs
             const questBox = document.getElementById("quest-box");
+
+            const questGo = document.getElementById("go") as HTMLButtonElement;
+            const questGo2 = document.getElementById("go2") as HTMLButtonElement;
+            const questGo3 = document.getElementById("go3") as HTMLButtonElement;
+            const questCancel = document.getElementById("cancel");
+
+            let difficulty = 'easy'
+
             this.physics.add.overlap(
                 this.npc,
                 this.player.weaponHitbox,
                 (_obj1, _player) => {
                     this.quest.requestQuest(0, this.inventory, this.stats);
 
-                    const questGo = document.getElementById("go");
-                    const questCancel = document.getElementById("cancel");
-                    questGo?.addEventListener("click", this.questGoEvent, true);
-                    questCancel?.addEventListener(
-                        "click",
-                        this.questCancelEvent,
-                        true,
-                    );
+                    questGo.addEventListener("click", this.questGoEvent, true);
+                    questGo2.addEventListener("click", this.questGoEvent, true);
+                    questGo3.addEventListener("click", this.questGoEvent, true);
+                    questCancel?.addEventListener("click", this.questCancelEvent, true);
 
                     if (questBox) {
                         questBox.style.display = "block";
@@ -227,7 +203,11 @@ export class Game extends Scene {
                     }
                 },
             );
-            this.questGoEvent = () => {
+            this.questGoEvent = (evt) => {
+                if(evt.target == questGo) difficulty = 'easy'
+                else if(evt.target == questGo2) difficulty = 'normal'
+                else if(evt.target == questGo3) difficulty = 'hard'
+                console.log(difficulty)
                 this.physics.add.overlap(
                     this.enterance[1],
                     this.player,
@@ -239,7 +219,7 @@ export class Game extends Scene {
                                 this.attackEvent,
                                 true,
                             );
-                        this.scene.start("Hutan", { from: "hamemayu" });
+                        this.scene.start("Hutan", { difficulty: difficulty });
                     },
                 );
                 if (questBox) questBox.style.display = "none";
@@ -264,8 +244,12 @@ export class Game extends Scene {
     removeListener() {
         this.player.destroy();
         const questGo = document.getElementById("go");
+        const questGo2 = document.getElementById("go2");
+        const questGo3 = document.getElementById("go3");
         const questCancel = document.getElementById("cancel");
         questGo?.removeEventListener("click", this.questGoEvent);
+        questGo2?.removeEventListener("click", this.questGoEvent);
+        questGo3?.removeEventListener("click", this.questGoEvent);
         questCancel?.removeEventListener("click", this.questCancelEvent);
         this.attack?.removeEventListener("touchstart", this.attackEvent, true);
     }

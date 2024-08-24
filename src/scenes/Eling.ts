@@ -174,12 +174,20 @@ export class Game extends Scene {
 
             // NPCs
             const questBox = document.getElementById('quest-box')
+            let difficulty = 'easy'
+
             this.physics.add.overlap(this.npc, this.player.weaponHitbox, (_obj1, _player) => {
                 this.quest.requestQuest(1, this.inventory, this.stats)
                 
-                const questGo = document.getElementById('go')
+                const questGo = document.getElementById('go') as HTMLButtonElement
+                const questGo2 = document.getElementById('go2') as HTMLButtonElement
+                const questGo3 = document.getElementById('go3') as HTMLButtonElement
                 const questCancel = document.getElementById('cancel')
+
+                difficulty = questGo.value
                 questGo?.addEventListener('click', this.questGoEvent)
+                questGo2?.addEventListener('click', this.questGoEvent)
+                questGo3?.addEventListener('click', this.questGoEvent)
                 questCancel?.addEventListener('click', this.questCancelEvent)
                 
                 if(questBox){
@@ -187,11 +195,19 @@ export class Game extends Scene {
                     questBox.scrollTo(0, 0)
                 }
             })
-            this.questGoEvent = () => {
-                this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
+
+            let overlapEvent: Phaser.Physics.Arcade.Collider
+
+            this.questGoEvent = (evt) => {
+                if((evt.target as HTMLButtonElement).value == 'easy') difficulty = 'easy'
+                else if((evt.target as HTMLButtonElement).value == 'normal') difficulty = 'normal'
+                else if((evt.target as HTMLButtonElement).value == 'hard') difficulty = 'hard'
+                console.log(difficulty)
+                if(overlapEvent) overlapEvent.destroy()
+                overlapEvent = this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
                     this.network.changeMap('Kolam')
                     if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
-                    this.scene.start('Kolam', { from: 'eling' })
+                    this.scene.start('Kolam', { difficulty: difficulty })
                 })
                 if(questBox) questBox.style.display = 'none'
             }
@@ -209,9 +225,13 @@ export class Game extends Scene {
 
     removeListener(){
         this.player.destroy()
-        const questGo = document.getElementById('go')
-        const questCancel = document.getElementById('cancel')
-        questGo?.removeEventListener('click', this.questGoEvent)
+        const questGo = document.getElementById("go");
+        const questGo2 = document.getElementById("go2");
+        const questGo3 = document.getElementById("go3");
+        const questCancel = document.getElementById("cancel");
+        questGo?.removeEventListener("click", this.questGoEvent);
+        questGo2?.removeEventListener("click", this.questGoEvent);
+        questGo3?.removeEventListener("click", this.questGoEvent);
         questCancel?.removeEventListener('click', this.questCancelEvent)
         this.attack?.removeEventListener('touchstart', this.attackEvent, true)
     }

@@ -39,10 +39,15 @@ export class Game extends Scene {
     embung: Phaser.Tilemaps.TilemapLayer;
     bullets: Phaser.GameObjects.Group;
     stats: Stats;
+    difficulty: string;
 
     constructor () {
         super('Kolam');
         this.map = 'kolam'
+    }
+
+    init(props: { difficulty: string }){
+        this.difficulty = props.difficulty
     }
 
     create () {
@@ -73,7 +78,7 @@ export class Game extends Scene {
         this.bullets = this.add.group()
 
         // Enemy
-        this.enemy = new Enemy(this, coor(13), coor(8))
+        this.enemy = new Enemy(this, coor(13), coor(8), this.difficulty)
 
         // Stats
         this.stats = new Stats(this.socket)
@@ -95,17 +100,29 @@ export class Game extends Scene {
         this.enterance[0].setSize(4, 32)
 
         // Enemy
+        let attackSpeed = [800, 1500]
+        let knockback = 400
+
+        if(this.difficulty == 'normal'){
+            attackSpeed = [600, 1000]
+            knockback = 500
+        }
+        else if(this.difficulty == 'hard'){
+            attackSpeed = [500, 800]
+            knockback = 600
+        }
+
         const shot = () => {
             if(this.enemy.active){
                 if(this.enemy.enemyState == 2){
                     this.enemy.attack(this.player.x, this.player.y)
-                    setTimeout(shot, 1500)
+                    setTimeout(shot, attackSpeed[0])
                 }
                 else{
                     const x = Math.random()*64+this.player.x-32
                     const y = Math.random()*64+this.player.y-32
                     this.enemy.attack(x, y)
-                    setTimeout(shot, 800)
+                    setTimeout(shot, attackSpeed[1])
                 }
             }
         }
@@ -119,7 +136,7 @@ export class Game extends Scene {
                 if(bullet.body){
                     this.player.knockbackDir.x = bullet.body.velocity.x
                     this.player.knockbackDir.y = bullet.body.velocity.y
-                    this.player.knockback = 400
+                    this.player.knockback = knockback
                 }
                 
                 this.add.tween({
@@ -224,6 +241,8 @@ export class Game extends Scene {
                 if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
                 this.scene.start('Eling', { from: 'kolam' })
             })
+            this.inventory.addItem('pohon', 6)
+            this.inventory.addItem('ember', 30)
             this.stats.addXp(1)
             this.quest.completeQuest(0)
         }
