@@ -104,14 +104,6 @@ export class Game extends Scene {
 
         // Inventory
         this.inventory = new Inventory(this.socket)
-        const item = document.getElementById('item');
-        const itemAmount = document.getElementById('item-amount');
-        if(item) item.className = 'item-'+this.inventory.currentName()
-        if(itemAmount){
-            itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
-            if(this.inventory.current == 0) itemAmount.style.display = 'none'
-            else itemAmount.style.display = 'block'
-        }
 
         // Controller
         Controller.basic(this)
@@ -199,9 +191,7 @@ export class Game extends Scene {
             let overlapEvent: Phaser.Physics.Arcade.Collider
 
             this.questGoEvent = (evt) => {
-                if((evt.target as HTMLButtonElement).value == 'easy') difficulty = 'easy'
-                else if((evt.target as HTMLButtonElement).value == 'normal') difficulty = 'normal'
-                else if((evt.target as HTMLButtonElement).value == 'hard') difficulty = 'hard'
+                difficulty = (evt.target as HTMLButtonElement).value
                 console.log(difficulty)
                 if(overlapEvent) overlapEvent.destroy()
                 overlapEvent = this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {

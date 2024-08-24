@@ -100,13 +100,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         if(this.weapon.anims.isPlaying) this.weapon.setVisible(true)
         else this.weapon.setVisible(false)
 
-        this.body?.velocity.normalize().scale(30)
+        this.body?.velocity.normalize().scale(this.speed[0])
 
         if(this.enemyState == 1){
             this.body?.velocity.normalize().scale(0)
         }
         else if(this.enemyState == 2){
-            this.body?.velocity.normalize().scale(50)
+            this.body?.velocity.normalize().scale(this.speed[1])
         }
 
         this.setDepth(this.y-4)

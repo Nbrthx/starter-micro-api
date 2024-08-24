@@ -24,7 +24,6 @@ export class Game extends Scene {
     socket: Socket;
     players: Phaser.GameObjects.Group;
     map: string;
-    player2: Player;
     joystick: Joystick;
     enemy: Enemy;
     collider: any;
@@ -186,15 +185,6 @@ export class Game extends Scene {
 
         // Inventory
         this.inventory = new Inventory(this.socket)
-        const item = document.getElementById('item');
-        const itemAmount = document.getElementById('item-amount');
-        if(item) item.className = 'item-'+this.inventory.currentName()
-        if(itemAmount) itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
-        if(itemAmount){
-            itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
-            if(this.inventory.current == 0) itemAmount.style.display = 'none'
-            else itemAmount.style.display = 'block'
-        }
 
         // Controller
         Controller.kolam(this)
@@ -241,9 +231,13 @@ export class Game extends Scene {
                 if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
                 this.scene.start('Eling', { from: 'kolam' })
             })
-            this.inventory.addItem('pohon', 6)
-            this.inventory.addItem('ember', 30)
-            this.stats.addXp(1)
+            let reward = [6, 30, 1]
+            if(this.difficulty == 'normal') reward = [12, 60, 2]
+            else if(this.difficulty == 'hard') reward = [18, 90, 3]
+
+            this.inventory.addItem('pohon', reward[0])
+            this.inventory.addItem('ember', reward[1])
+            this.stats.addXp(reward[2])
             this.quest.completeQuest(0)
         }
     }

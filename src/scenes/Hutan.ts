@@ -23,7 +23,6 @@ export class Game extends Scene {
     socket: Socket;
     players: Phaser.GameObjects.Group;
     map: string;
-    player2: Player;
     joystick: Joystick;
     enemy: Enemy;
     weaponHitbox: Phaser.GameObjects.Group;
@@ -191,15 +190,6 @@ export class Game extends Scene {
 
         // Inventory
         this.inventory = new Inventory(this.socket)
-        const item = document.getElementById('item');
-        const itemAmount = document.getElementById('item-amount');
-        if(item) item.className = 'item-'+this.inventory.currentName()
-        if(itemAmount) itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
-        if(itemAmount){
-            itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
-            if(this.inventory.current == 0) itemAmount.style.display = 'none'
-            else itemAmount.style.display = 'block'
-        }
 
         // Controller
         Controller.hutan(this)
@@ -243,8 +233,13 @@ export class Game extends Scene {
                 if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
                 this.scene.start('Hamemayu', { from: 'hutan' })
             })
-            this.stats.addXp(1)
-            this.inventory.addItem('kayu', 1)
+
+            let reward = [1, 1]
+            if(this.difficulty == 'normal') reward = [2, 2]
+            else if(this.difficulty == 'hard') reward = [3, 3]
+
+            this.inventory.addItem('kayu', reward[0])
+            this.stats.addXp(reward[1])
             this.quest.completeQuest(0)
         }
     }

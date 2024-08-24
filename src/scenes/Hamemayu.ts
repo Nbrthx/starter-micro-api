@@ -22,7 +22,6 @@ export class Game extends Scene {
     socket: Socket;
     players: Phaser.GameObjects.Group;
     map: string;
-    player2: Player;
     joystick: Joystick;
     weaponHitbox: Phaser.GameObjects.Group;
     collider: any[];
@@ -101,15 +100,6 @@ export class Game extends Scene {
         
         // Inventory
         this.inventory = new Inventory(this.socket);
-        const item = document.getElementById("item");
-        const itemAmount = document.getElementById("item-amount");
-        if (item) item.className = "item-" + this.inventory.currentName();
-        if (itemAmount) {
-            itemAmount.innerHTML =
-                this.inventory.items[this.inventory.current].amount + "x";
-            if (this.inventory.current == 0) itemAmount.style.display = "none";
-            else itemAmount.style.display = "block";
-        }
 
         // Controller
         Controller.basic(this);
@@ -179,34 +169,32 @@ export class Game extends Scene {
             // NPCs
             const questBox = document.getElementById("quest-box");
             let difficulty = 'easy'
-            this.physics.add.overlap(
-                this.npc,
-                this.player.weaponHitbox,
-                (_obj1, _player) => {
-                    this.quest.requestQuest(0, this.inventory, this.stats);
+            this.physics.add.overlap(this.npc, this.player.weaponHitbox, (_obj1, _player) => {
+                this.quest.requestQuest(0, this.inventory, this.stats);
 
-                    const questGo = document.getElementById("go") as HTMLButtonElement;
-                    const questGo2 = document.getElementById("go2") as HTMLButtonElement;
-                    const questGo3 = document.getElementById("go3") as HTMLButtonElement;
-                    const questCancel = document.getElementById("cancel");
+                const questGo = document.getElementById("go") as HTMLButtonElement;
+                const questGo2 = document.getElementById("go2") as HTMLButtonElement;
+                const questGo3 = document.getElementById("go3") as HTMLButtonElement;
+                const questCancel = document.getElementById("cancel");
 
-                    questGo.addEventListener("click", this.questGoEvent, true);
-                    questGo2.addEventListener("click", this.questGoEvent, true);
-                    questGo3.addEventListener("click", this.questGoEvent, true);
-                    questCancel?.addEventListener("click", this.questCancelEvent, true);
+                questGo.addEventListener("click", this.questGoEvent, true);
+                questGo2.addEventListener("click", this.questGoEvent, true);
+                questGo3.addEventListener("click", this.questGoEvent, true);
+                questCancel?.addEventListener("click", this.questCancelEvent, true);
 
-                    if (questBox) {
-                        questBox.style.display = "block";
-                        questBox.scrollTo(0, 0);
-                    }
-                },
-            );
+                if (questBox) {
+                    questBox.style.display = "block";
+                    questBox.scrollTo(0, 0);
+                }
+            });
+
+            let overlapEvent: Phaser.Physics.Arcade.Collider
+
             this.questGoEvent = (evt) => {
-                if((evt.target as HTMLButtonElement).value == 'easy') difficulty = 'easy'
-                else if((evt.target as HTMLButtonElement).value == 'normal') difficulty = 'normal'
-                else if((evt.target as HTMLButtonElement).value == 'hard') difficulty = 'hard'
+                difficulty = (evt.target as HTMLButtonElement).value
                 console.log(difficulty)
-                this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
+                if(overlapEvent) overlapEvent.destroy()
+                overlapEvent = this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
                     this.network.changeMap("hutan");
                     if (this.attackEvent) this.attack?.removeEventListener( "touchstart", this.attackEvent, true);
                     this.scene.start("Hutan", { difficulty: difficulty });

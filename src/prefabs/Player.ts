@@ -1,3 +1,4 @@
+import { Outfit } from "../components/Outfit";
 import { TextBox } from "../components/Textbox";
 import { Game } from "../scenes/Lobby";
 import { Hitbox } from "./Hitbox";
@@ -9,6 +10,8 @@ export interface PlayerData{
     x: number;
     y: number;
     level: number;
+    head: string;
+    outfit: string;
 }
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
@@ -209,10 +212,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             this.body?.velocity.normalize().scale(this.knockback)
             this.knockback = Math.floor(this.knockback/2)
         }
-        else this.body?.velocity.normalize().scale(80)
+        else this.body?.velocity.normalize().scale(80);
+
+        const outfit = (this.scene as Phaser.Scene & {outfit: Outfit}).outfit
+
+        if(this.main){
+            if(this.head.texture.key != outfit.currentHead) this.head.setTexture(outfit.currentHead)
+            if(this.outfit.texture.key != outfit.currentOutfit) this.outfit.setTexture(outfit.currentOutfit)
+            this.playerName.setText(this.scene.registry.get('username')+' lvl.'+(this.scene as Game).stats.getLevel())
+        }
 
         this.container.setDepth(this.y-4)
-        this.playerName.setText(this.scene.registry.get('username')+' lvl.'+(this.scene as Game).stats.getLevel())
         this.healthBar.setSize(20*this.health/100, 2)
         this.healthBar.setX(-10-10*this.health/-100)
     }

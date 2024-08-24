@@ -7,6 +7,7 @@ import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
 import { Trees } from '../components/Trees';
 import { Stats } from '../components/Stats';
+import { Outfit } from '../components/Outfit';
 
 const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -21,7 +22,6 @@ export class Game extends Scene {
     socket: Socket;
     players: Phaser.GameObjects.Group;
     map: string;
-    player2: Player;
     joystick: Joystick;
     weaponHitbox: Phaser.GameObjects.Group;
     collider: any;
@@ -35,6 +35,9 @@ export class Game extends Scene {
     fog: Phaser.GameObjects.TileSprite;
     backsound: Phaser.Sound.NoAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.WebAudioSound;
     stats: Stats;
+    menuOutfit: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    outfit: Outfit;
+    menuWeekly: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
     constructor () {
         super('Lobby');
@@ -86,6 +89,24 @@ export class Game extends Scene {
         // Others
         this.players = this.add.group()
 
+        // Menu
+        this.menuOutfit = this.physics.add.sprite(coor(16), coor(8), 'menu')
+        this.menuOutfit.play('menu-idle')
+        this.add.text(this.menuOutfit.x, this.menuOutfit.y-13, 'Mas "Ganti Baju"', {
+            fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 1,
+            align: 'center'
+        }).setOrigin(0.5, 0.5).setResolution(5)
+
+        this.menuWeekly = this.physics.add.sprite(coor(18), coor(12), 'menu')
+        this.menuWeekly.play('menu-idle')
+        this.add.text(this.menuWeekly.x, this.menuWeekly.y-13, 'Mas "Optional Mission"', {
+            fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 1,
+            align: 'center'
+        }).setOrigin(0.5, 0.5).setResolution(5)
+
+        this.outfit = new Outfit(this.socket)
         
         // Stats
         this.stats = new Stats(this.socket)
@@ -115,15 +136,6 @@ export class Game extends Scene {
 
         // Inventory
         this.inventory = new Inventory(this.socket)
-        const item = document.getElementById('item');
-        const itemAmount = document.getElementById('item-amount');
-        if(item) item.className = 'item-'+this.inventory.currentName()
-        if(itemAmount){
-            itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
-            if(this.inventory.current == 0) itemAmount.style.display = 'none'
-            else if(this.inventory.current == 3) itemAmount.style.display = 'none'
-            else itemAmount.style.display = 'block'
-        }
 
         // Controller
         Controller.basic(this)
@@ -181,6 +193,14 @@ export class Game extends Scene {
             this.camera.startFollow(this.player, true, 0.05, 0.05)
             this.physics.add.collider(this.player, this.collider)
 
+            // Menu
+            this.physics.add.overlap(this.menuOutfit, this.player.weaponHitbox, (_obj1, _player) => {
+                this.outfit.open()
+                const outfitBox = document.getElementById('outfit-box')
+                if(outfitBox) outfitBox.style.display = 'block'
+            })
+
+            // Enterance
             this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
                 this.network.changeMap('hamemayu')
                 this.removeListener()

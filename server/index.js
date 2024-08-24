@@ -97,11 +97,15 @@ io.on('connection', (socket) => {
       callback(false)
       return
     }
+
+    // const head = ['basic', 'blue', 'green', 'brown', 'women', 'women-purple', 'women-red']
+    // const outfit = ['basic', 'blue', 'green', 'brown', 'women-purple']
+
     const account = {
       username: data.username,
       hash: sha256(data.hash),
-      head: [],
-      outfit: [],
+      head: ['basic', 'women', 'blue', 'green'],
+      outfit: ['basic', 'blue', 'green'],
       xp: 0,
       inventory: [0, 0, 0] // Pohon, Ember, Kayu
     }
@@ -110,9 +114,9 @@ io.on('connection', (socket) => {
 
     connection.query('INSERT INTO accounts VALUES ("'+account.username+
     '", "'+account.hash+
-    '", "'+JSON.stringify(account.head)+
-    '", "'+JSON.stringify(account.outfit)+
-    '", '+account.xp+
+    '", \''+JSON.stringify(account.head)+
+    '\', \''+JSON.stringify(account.outfit)+
+    '\', '+account.xp+
     ', "'+JSON.stringify(account.inventory)+'")', function (error, results, fields) {
       if (error) throw error;
     })
@@ -172,7 +176,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('update', (data) => {
-    const { map, x, y, health } = data; 
+    const { map, x, y, level, head, outfit } = data; 
     
     if (!rooms.has(map)) return;
     const roomPlayers = rooms.get(map);
@@ -180,6 +184,9 @@ io.on('connection', (socket) => {
     if (player) {
         player.x = x;
         player.y = y;
+        player.level = level;
+        player.head = head;
+        player.outfit = outfit;
     }
   })
 
@@ -220,6 +227,19 @@ io.on('connection', (socket) => {
     account.xp += amount
 
     connection.query('UPDATE accounts SET xp = '+account.xp+' WHERE username="'+account.username+'"', function (error, results, fields) {
+      if (error) throw error;
+    })
+  })
+
+  // Outfit
+  socket.on('outfit-update', (type, name) => {
+    const account = accounts.find(v => v.username == clients.get(socket.id))
+    
+    if(!account) return
+    if(type == 'head') account.head.push(name)
+    else if(type == 'outfit') account.outfit.push(name)
+
+    connection.query('UPDATE accounts SET outfit = \''+JSON.stringify(account.outfit)+'\', head = \''+JSON.stringify(account.head)+'\' WHERE username="'+account.username+'"', function (error, results, fields) {
       if (error) throw error;
     })
   })

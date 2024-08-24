@@ -11,6 +11,7 @@ import { Home } from '../prefabs/Home';
 import { Enemy } from '../prefabs/Enemy3';
 import { Popup } from '../components/Popup';
 import { Stats } from '../components/Stats';
+import { Bullet } from '../prefabs/Bullet';
 
 const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -25,7 +26,6 @@ export class Game extends Scene {
     socket: Socket;
     players: Phaser.GameObjects.Group;
     map: string;
-    player2: Player;
     joystick: Joystick;
     weaponHitbox: Phaser.GameObjects.Group;
     collider: any[];
@@ -120,14 +120,6 @@ export class Game extends Scene {
 
         // Inventory
         this.inventory = new Inventory(this.socket)
-        const item = document.getElementById('item');
-        const itemAmount = document.getElementById('item-amount');
-        if(item) item.className = 'item-'+this.inventory.currentName()
-        if(itemAmount){
-            itemAmount.innerHTML = this.inventory.items[this.inventory.current].amount+'x'
-            if(this.inventory.current == 0) itemAmount.style.display = 'none'
-            else itemAmount.style.display = 'block'
-        }
 
         // Controller
         Controller.rumah(this)
@@ -197,6 +189,38 @@ export class Game extends Scene {
                 this.network.changeMap('lobby')
                 this.removeListener()
                 this.scene.start('Rukun', { from: 'rumah' })
+            })
+
+            // Bullets
+            this.physics.add.overlap(this.player, this.bullets, (_player, _bullet) => {
+                if(!this.player.damaged){
+                    this.player.damaged = true
+                    this.player.health -= 20
+    
+                    let bullet = _bullet as Bullet
+                    if(bullet.body){
+                        this.player.knockbackDir.x = bullet.body.velocity.x
+                        this.player.knockbackDir.y = bullet.body.velocity.y
+                        this.player.knockback = 400
+                    }
+                    
+                    this.add.tween({
+                        targets: [this.player.head, this.player.outfit],
+                        duration: 50,
+                        ease: 'ease-in-out',
+                        alpha: 0,
+                        repeat: 1,
+                        yoyo: true
+                    })
+    
+                    if(this.player.health <= 0){
+                        this.socket.removeAllListeners()
+                        this.player.destroy()
+                        if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
+                        this.scene.start('GameOver')
+                    }
+                    setTimeout(() => this.player.damaged = false, 300)
+                }
             })
         }
         else{

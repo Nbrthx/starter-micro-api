@@ -22,7 +22,6 @@ export class Game extends Scene {
     socket: Socket;
     players: Phaser.GameObjects.Group;
     map: string;
-    player2: Player;
     joystick: Joystick;
     weaponHitbox: Phaser.GameObjects.Group;
     collider: any[];

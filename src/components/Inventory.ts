@@ -51,6 +51,15 @@ export class Inventory {
                 if(item) item.amount = v
             })
         })
+
+        const item = document.getElementById('item');
+        const itemAmount = document.getElementById('item-amount');
+        if(item) item.className = 'item-'+this.currentName()
+        if(itemAmount){
+            if(this.current == 0 || this.current == 3) itemAmount.style.display = 'none'
+            else itemAmount.style.display = 'block'
+            itemAmount.innerHTML = this.items[this.current].amount+'x'
+        }
     }
 
     addItem(name: string, amount: number){

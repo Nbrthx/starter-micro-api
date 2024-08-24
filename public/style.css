@@ -236,6 +236,20 @@ h1 {
     font-size: 6vh;
 }
 
+#outfit-box {
+    background: #ffffff;
+    width: calc(50vw - 80px);
+    height: calc(90vh - 80px);
+    position: absolute;
+    top: 40px;
+    left: 25vw;
+    padding: 10px 40px;
+    font-size: 6vh;
+    overflow-y: scroll;
+    color: #000;
+    display: none;
+}
+
 @media screen and (orientation: landscape) {
     #request-rotate{
         display: none;

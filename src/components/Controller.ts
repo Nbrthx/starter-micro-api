@@ -36,6 +36,26 @@ export class Controller{
         }
     }
 
+    static changeButton(scene: Lobby | Hamemayu | Hutan | Kolam | Rumah){
+        const changeBtnEvent = () => {
+            scene.inventory.changeItem()
+            if(item) item.className = 'item-'+scene.inventory.currentName()
+            if(itemAmount){
+                if(scene.inventory.current == 0 || scene.inventory.current == 3) itemAmount.style.display = 'none'
+                else itemAmount.style.display = 'block'
+                itemAmount.innerHTML = scene.inventory.items[scene.inventory.current].amount+'x'
+            }
+        }
+
+        changeBtn?.addEventListener('touchstart', changeBtnEvent, true)
+        
+        scene.attack?.addEventListener('touchstart', scene.attackEvent, true)
+        const j = scene.input.keyboard?.addKey('J', false)
+        const k = scene.input.keyboard?.addKey('K', false)
+        if(j) j.on('down', () => scene.attackEvent())
+        if(k) k.on('down', () => changeBtnEvent())
+    }
+
     static basic(scene: Lobby | Hamemayu){
         scene.attack = document.getElementById('attack');
 
@@ -53,23 +73,7 @@ export class Controller{
             }
         }
 
-        const changeBtnEvent = () => {
-            scene.inventory.changeItem()
-            if(item) item.className = 'item-'+scene.inventory.currentName()
-            if(itemAmount){
-                if(scene.inventory.current == 0 || scene.inventory.current == 3) itemAmount.style.display = 'none'
-                else itemAmount.style.display = 'block'
-                itemAmount.innerHTML = scene.inventory.items[scene.inventory.current].amount+'x'
-            }
-        }
-
-        changeBtn?.addEventListener('touchstart', changeBtnEvent, true)
-        
-        scene.attack?.addEventListener('touchstart', scene.attackEvent, true)
-        const space = scene.input.keyboard?.addKey('SPACE', false)
-        const f = scene.input.keyboard?.addKey('B', false)
-        if(space) space.on('down', () => scene.attackEvent())
-        if(f) f.on('down', () => changeBtnEvent())
+        this.changeButton(scene)
     }
 
     static hutan(scene: Hutan){
@@ -108,23 +112,7 @@ export class Controller{
             }
         }
 
-        const changeBtnEvent = () => {
-            scene.inventory.changeItem()
-            if(item) item.className = 'item-'+scene.inventory.currentName()
-            if(itemAmount){
-                if(scene.inventory.current == 0 || scene.inventory.current == 3) itemAmount.style.display = 'none'
-                else itemAmount.style.display = 'block'
-                itemAmount.innerHTML = scene.inventory.items[scene.inventory.current].amount+'x'
-            }
-        }
-
-        changeBtn?.addEventListener('touchstart', changeBtnEvent, true)
-        
-        scene.attack?.addEventListener('touchstart', scene.attackEvent, true)
-        const space = scene.input.keyboard?.addKey('SPACE', false)
-        const f = scene.input.keyboard?.addKey('B', false)
-        if(space) space.on('down', () => scene.attackEvent())
-        if(f) f.on('down', () => changeBtnEvent())
+        this.changeButton(scene)
     }
 
     static kolam(scene: Kolam){
@@ -158,23 +146,7 @@ export class Controller{
             }
         }
 
-        const changeBtnEvent = () => {
-            scene.inventory.changeItem()
-            if(item) item.className = 'item-'+scene.inventory.currentName()
-            if(itemAmount){
-                if(scene.inventory.current == 0 || scene.inventory.current == 3) itemAmount.style.display = 'none'
-                else itemAmount.style.display = 'block'
-                itemAmount.innerHTML = scene.inventory.items[scene.inventory.current].amount+'x'
-            }
-        }
-
-        changeBtn?.addEventListener('touchstart', changeBtnEvent, true)
-        
-        scene.attack?.addEventListener('touchstart', scene.attackEvent, true)
-        const space = scene.input.keyboard?.addKey('SPACE', false)
-        const f = scene.input.keyboard?.addKey('B', false)
-        if(space) space.on('down', () => scene.attackEvent())
-        if(f) f.on('down', () => changeBtnEvent())
+        this.changeButton(scene)
     }
 
     static rumah(scene: Rumah){
@@ -205,22 +177,6 @@ export class Controller{
             }
         }
 
-        const changeBtnEvent = () => {
-            scene.inventory.changeItem()
-            if(item) item.className = 'item-'+scene.inventory.currentName()
-            if(itemAmount){
-                if(scene.inventory.current == 0 || scene.inventory.current == 3) itemAmount.style.display = 'none'
-                else itemAmount.style.display = 'block'
-                itemAmount.innerHTML = scene.inventory.items[scene.inventory.current].amount+'x'
-            }
-        }
-
-        changeBtn?.addEventListener('touchstart', changeBtnEvent, true)
-        
-        scene.attack?.addEventListener('touchstart', scene.attackEvent, true)
-        const space = scene.input.keyboard?.addKey('SPACE', false)
-        const f = scene.input.keyboard?.addKey('B', false)
-        if(space) space.on('down', () => scene.attackEvent())
-        if(f) f.on('down', () => changeBtnEvent())
+        this.changeButton(scene)
     }
 }

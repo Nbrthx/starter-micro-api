@@ -15,16 +15,14 @@ export class MainMenu extends Scene
     }
 
     create () {
-        this.cameras.main.setBackgroundColor('#444499');
+        this.cameras.main.setBackgroundColor('#000000');
 
         this.background = this.add.image(this.scale.width/2, this.scale.height/2, 'background');
-        this.background.setAlpha(0.5);
+        this.background.setScale((this.scale.width/this.scale.height)/(20/9))
 
-        this.logo = this.add.image(this.scale.width/2, 300, 'logo');
-
-        this.title = this.add.text(this.scale.width/2, 460, 'Play', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
+        this.title = this.add.text(this.scale.width/2, 600, 'P l a y', {
+            fontFamily: 'Arial Black', fontSize: 48, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 4,
             align: 'center'
         }).setOrigin(0.5);
 

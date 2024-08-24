@@ -55,7 +55,9 @@ export class Network {
                         existingPlayer.dir.x = parseInt(player.x - existingPlayer.x+'')
                         existingPlayer.dir.y = parseInt(player.y - existingPlayer.y+'')
                         existingPlayer.dir.normalize()
-                        existingPlayer.playerName.setText(player.username+' Lvl'+player.level)
+                        existingPlayer.playerName.setText(player.username+' lvl.'+player.level)
+                        if(existingPlayer.head.texture.key != player.head) existingPlayer.head.setTexture(player.head)
+                        if(existingPlayer.outfit.texture.key != player.outfit) existingPlayer.outfit.setTexture(player.outfit)
                         existingPlayer.update()
                     }
                 }
@@ -101,7 +103,9 @@ export class Network {
             x: x,
             y: y,
             dir: dir,
-            level: this.scene.stats.getLevel()
+            level: this.scene.stats.getLevel(),
+            head: this.scene.player.head.texture.key,
+            outfit: this.scene.player.outfit.texture.key
         })
     }
 
