@@ -1,7 +1,7 @@
 import { Scene } from 'phaser';
 
 const head = ['basic', 'blue', 'green', 'brown', 'women', 'women-purple', 'women-red']
-const outfit = ['basic', 'blue', 'green', 'brown', 'women-purple']
+const outfit = ['basic', 'blue', 'green', 'brown', 'women-purple', 'gold', 'dark', 'simply']
 
 export class Preloader extends Scene
 {
@@ -23,7 +23,8 @@ export class Preloader extends Scene
 
             //  Update the progress bar (our bar is 464px wide, so 100% = 464px)
             bar.setText((progress*100).toPrecision(2)+'%');
-            if(progress == 0) bar.setText('0')
+            if(progress == 0) bar.setText('0%')
+            if(progress == 1) bar.setText('100%')
 
         });
     }
@@ -54,9 +55,6 @@ export class Preloader extends Scene
         for(var i of outfit){
             this.load.spritesheet(i+'-outfit', 'character/outfit/'+i+'-outfit.png', { frameWidth: 16, frameHeight: 16 });
         }
-        for(var i of outfit){
-            this.load.spritesheet(i+'-outfit', 'character/outfit/'+i+'-outfit.png', { frameWidth: 16, frameHeight: 16 });
-        }
 
         this.load.spritesheet('enemy', 'character/enemy/enemy.png', { frameWidth: 16, frameHeight: 16 });
         this.load.spritesheet('enemy2', 'character/enemy/enemy2.png', { frameWidth: 16, frameHeight: 16 });
@@ -77,6 +75,9 @@ export class Preloader extends Scene
 
         // Audio
         this.load.audio('step', 'audio/step.mp3')
+        this.load.audio('swing', 'audio/swing.mp3')
+        this.load.audio('hit', 'audio/hit.mp3')
+        this.load.audio('shot', 'audio/shot.mp3')
         this.load.audio('backsound', 'audio/backsound.mp3')
     }
 

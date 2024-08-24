@@ -11,6 +11,7 @@ import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
 import { Popup } from '../components/Popup';
 import { Stats } from '../components/Stats';
+import { Outfit } from '../components/Outfit';
 
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -38,6 +39,7 @@ export class Game extends Scene {
     counter: number;
     stats: Stats;
     difficulty: string;
+    outfit: Outfit;
 
     constructor () {
         super('Hutan');
@@ -78,6 +80,8 @@ export class Game extends Scene {
         // Enemy
         this.enemy = new Enemy(this, coor(13), coor(8), this.difficulty)
 
+        // Outfit
+        this.outfit = new Outfit(this.socket)
         
         // Stats
         this.stats = new Stats(this.socket)
@@ -145,6 +149,7 @@ export class Game extends Scene {
             if(!this.player.damaged){
                 this.player.damaged = true
                 this.player.health -= 5
+                this.sound.play('hit')
                 
                 this.add.tween({
                     targets: [this.player.head, this.player.outfit],
@@ -168,6 +173,7 @@ export class Game extends Scene {
             if(!this.enemy.damaged){
                 this.enemy.damaged = true
                 this.enemy.health -= 5
+                this.sound.play('hit', { volume: 0.5 })
 
                 this.add.tween({
                     targets: this.enemy,
@@ -179,6 +185,9 @@ export class Game extends Scene {
                 })
 
                 if(this.enemy.health <= 0){
+                    if(this.difficulty == 'easy') this.outfit.addOutfit('head', 'women-purple')
+                    else if(this.difficulty == 'normal') this.outfit.addOutfit('head', 'brown')
+                    else if(this.difficulty == 'hard') this.outfit.addOutfit('outfit', 'dark')
                     this.enemy.destroy()
                 }
                 setTimeout(() => this.enemy.damaged = false, 300)

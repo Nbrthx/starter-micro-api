@@ -8,6 +8,7 @@ import { Controller } from "../components/Controller";
 import { Trees } from "../components/Trees";
 import { Quest } from "../components/Quest";
 import { Stats } from "../components/Stats";
+import { Outfit } from "../components/Outfit";
 
 const coor: Function = (x: number, xx: number = 0) => x * 16 + xx;
 
@@ -37,6 +38,7 @@ export class Game extends Scene {
     questGoEvent: EventListener;
     questCancelEvent: EventListener;
     stats: Stats;
+    outfit: Outfit;
 
     constructor() {
         super("Hamemayu");
@@ -94,6 +96,9 @@ export class Game extends Scene {
 
         // Quest
         this.quest = new Quest();
+
+        // Outfit
+        this.outfit = new Outfit(this.socket)
 
         // Stats
         this.stats = new Stats(this.socket)

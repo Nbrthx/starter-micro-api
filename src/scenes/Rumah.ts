@@ -12,6 +12,7 @@ import { Enemy } from '../prefabs/Enemy3';
 import { Popup } from '../components/Popup';
 import { Stats } from '../components/Stats';
 import { Bullet } from '../prefabs/Bullet';
+import { Outfit } from '../components/Outfit';
 
 const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -41,6 +42,7 @@ export class Game extends Scene {
     homes: Home[];
     counter: number;
     stats: Stats;
+    outfit: Outfit;
 
     constructor () {
         super('Rumah');
@@ -91,10 +93,13 @@ export class Game extends Scene {
         // Enemy
         this.bullets = this.add.group()
 
-        this.enemy = new Enemy(this, coor(8), coor(9))
+        this.enemy = new Enemy(this, coor(9), coor(9))
 
         // Quest
         this.counter = 0
+
+        // Outfit
+        this.outfit = new Outfit(this.socket)
         
         // Stats
         this.stats = new Stats(this.socket)
@@ -138,6 +143,7 @@ export class Game extends Scene {
 
         this.socket.on('enemy-attack', data => {
             if(this.enemy) this.enemy.attack(data.x, data.y)
+            if(this.scene.isActive('Rumah')) this.sound.play('shot', { volume: 0.5 })
         })
 
         const updatePlayer = () => {
@@ -195,7 +201,8 @@ export class Game extends Scene {
             this.physics.add.overlap(this.player, this.bullets, (_player, _bullet) => {
                 if(!this.player.damaged){
                     this.player.damaged = true
-                    this.player.health -= 20
+                    this.player.health -= 10
+                    this.sound.play('hit')
     
                     let bullet = _bullet as Bullet
                     if(bullet.body){
@@ -238,6 +245,7 @@ export class Game extends Scene {
 
     addCounter(){
         this.counter++;
+        this.outfit.addOutfit('outfit', 'women-red')
         Popup.misionComplete('Anda Berkontribusi Mewujudkan "Rukun Agawe Santoso"')
         this.stats.addXp(1)
     }

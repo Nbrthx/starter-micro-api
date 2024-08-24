@@ -8,6 +8,7 @@ import { Controller } from '../components/Controller';
 import { Trees } from '../components/Trees';
 import { Quest } from '../components/Quest';
 import { Stats } from '../components/Stats';
+import { Outfit } from '../components/Outfit';
 
 const coor: Function = (x: number, xx: number = 0) => x*16+xx;
 
@@ -37,6 +38,7 @@ export class Game extends Scene {
     questGoEvent: EventListener;
     questCancelEvent: EventListener;
     stats: Stats;
+    outfit: Outfit;
 
     constructor () {
         super('Rukun');
@@ -97,6 +99,9 @@ export class Game extends Scene {
 
         // Quest
         this.quest = new Quest()
+
+        // Outfit
+        this.outfit = new Outfit(this.socket)
         
         // Stats
         this.stats = new Stats(this.socket)
@@ -175,8 +180,12 @@ export class Game extends Scene {
                 
                 if(questBox) questBox.style.display = 'block'
             })
+
+            let overlapEvent: Phaser.Physics.Arcade.Collider
+
             this.questGoEvent = () => {
-                this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
+                if(overlapEvent) overlapEvent.destroy()
+                overlapEvent = this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
                     this.network.changeMap('hutan')
                     if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
                     this.scene.start('Rumah', { from: 'rukun' })

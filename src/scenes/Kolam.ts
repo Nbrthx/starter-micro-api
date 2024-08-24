@@ -12,6 +12,7 @@ import { Controller } from '../components/Controller';
 import { Bullet } from '../prefabs/Bullet';
 import { Popup } from '../components/Popup';
 import { Stats } from '../components/Stats';
+import { Outfit } from '../components/Outfit';
 
 export class Game extends Scene {
     camera: Phaser.Cameras.Scene2D.Camera;
@@ -39,6 +40,7 @@ export class Game extends Scene {
     bullets: Phaser.GameObjects.Group;
     stats: Stats;
     difficulty: string;
+    outfit: Outfit;
 
     constructor () {
         super('Kolam');
@@ -78,6 +80,9 @@ export class Game extends Scene {
 
         // Enemy
         this.enemy = new Enemy(this, coor(13), coor(8), this.difficulty)
+
+        // Outfit
+        this.outfit = new Outfit(this.socket)
 
         // Stats
         this.stats = new Stats(this.socket)
@@ -123,6 +128,7 @@ export class Game extends Scene {
                     this.enemy.attack(x, y)
                     setTimeout(shot, attackSpeed[1])
                 }
+                this.sound.play('shot', { volume: 0.5 })
             }
         }
         shot()
@@ -130,6 +136,7 @@ export class Game extends Scene {
             if(!this.player.damaged){
                 this.player.damaged = true
                 this.player.health -= 5
+                this.sound.play('hit')
 
                 let bullet = _bullet as Bullet
                 if(bullet.body){
@@ -160,6 +167,7 @@ export class Game extends Scene {
             if(!this.enemy.damaged){
                 this.enemy.damaged = true
                 this.enemy.health -= 5
+                this.sound.play('hit', { volume: 0.5 })
 
                 this.enemy.x = Math.floor(Math.random()*16*17)+16*2
                 this.enemy.y = Math.floor(Math.random()*16*10)+16*3
@@ -174,6 +182,9 @@ export class Game extends Scene {
                 })
 
                 if(this.enemy.health <= 0){
+                    if(this.difficulty == 'easy') this.outfit.addOutfit('outfit', 'women-purple')
+                    else if(this.difficulty == 'normal') this.outfit.addOutfit('outfit', 'brown')
+                    else if(this.difficulty == 'hard') this.outfit.addOutfit('outfit', 'gold')
                     this.enemy.destroy()
                 }
                 setTimeout(() => this.enemy.damaged = false, 300)

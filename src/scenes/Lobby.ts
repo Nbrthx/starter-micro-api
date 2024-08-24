@@ -37,7 +37,8 @@ export class Game extends Scene {
     stats: Stats;
     menuOutfit: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     outfit: Outfit;
-    menuWeekly: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    menuOptional: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    menuLogout: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
     constructor () {
         super('Lobby');
@@ -65,8 +66,7 @@ export class Game extends Scene {
         this.backsound = this.sound.add('backsound')
         this.backsound.setVolume(0.5)
         this.backsound.setLoop(true)
-        this.sound.stopAll()
-        this.backsound.play()
+        if(!this.sound.get('backsound').isPlaying) this.backsound.play()
 
         // Fog
         this.fog = this.add.tileSprite(0, 4*16, this.physics.world.bounds.width, this.physics.world.bounds.height, 'fog')
@@ -98,14 +98,23 @@ export class Game extends Scene {
             align: 'center'
         }).setOrigin(0.5, 0.5).setResolution(5)
 
-        this.menuWeekly = this.physics.add.sprite(coor(18), coor(12), 'menu')
-        this.menuWeekly.play('menu-idle')
-        this.add.text(this.menuWeekly.x, this.menuWeekly.y-13, 'Mas "Optional Mission"', {
+        this.menuOptional = this.physics.add.sprite(coor(18), coor(12), 'menu')
+        this.menuOptional.play('menu-idle')
+        this.add.text(this.menuOptional.x, this.menuOptional.y-13, 'Mas "Optional Mission"', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
             stroke: '#000000', strokeThickness: 1,
             align: 'center'
         }).setOrigin(0.5, 0.5).setResolution(5)
 
+        this.menuLogout = this.physics.add.sprite(coor(8), coor(12), 'menu')
+        this.menuLogout.play('menu-idle')
+        this.add.text(this.menuLogout.x, this.menuLogout.y-13, 'Mas "Logout"', {
+            fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 1,
+            align: 'center'
+        }).setOrigin(0.5, 0.5).setResolution(5)
+
+        // Outfit
         this.outfit = new Outfit(this.socket)
         
         // Stats
@@ -199,6 +208,40 @@ export class Game extends Scene {
                 const outfitBox = document.getElementById('outfit-box')
                 if(outfitBox) outfitBox.style.display = 'block'
             })
+            this.physics.add.overlap(this.menuOptional, this.player.weaponHitbox, (_obj1, _player) => {
+                const optionalBox = document.getElementById('optional-box')
+                const cancelBtn = document.getElementById('cancel-info')
+                if(optionalBox && cancelBtn){
+                    const cancel = () => {
+                        optionalBox.style.display = 'none'
+                        cancelBtn.removeEventListener('click', cancel)
+                    }
+                    cancelBtn.addEventListener('click', cancel)
+                    optionalBox.style.display = 'block'
+                }
+            })
+            this.physics.add.overlap(this.menuLogout, this.player.weaponHitbox, (_obj1, _player) => {
+                const logoutBox = document.getElementById('logout-box')
+                const goBtn = document.getElementById('logout')
+                const cancelBtn = document.getElementById('cancel-logout')
+                if(logoutBox && goBtn && cancelBtn){
+                    const go = () => {
+                        logoutBox.style.display = 'none'
+                        localStorage.removeItem('hash')
+                        this.network.changeMap('')
+                        this.removeListener()
+                        location.reload()
+                        goBtn.removeEventListener('click', go)
+                    }
+                    const cancel = () => {
+                        logoutBox.style.display = 'none'
+                        cancelBtn.removeEventListener('click', cancel)
+                    }
+                    goBtn.addEventListener('click', go)
+                    cancelBtn.addEventListener('click', cancel)
+                    logoutBox.style.display = 'block'
+                }
+            })
 
             // Enterance
             this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
@@ -228,7 +271,7 @@ export class Game extends Scene {
     }
 
     removeListener(){
-        this.player.destroy()
+        if(this.player) this.player.destroy()
         if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
     }
 }

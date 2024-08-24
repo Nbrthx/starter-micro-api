@@ -190,7 +190,7 @@ h1 {
     width: calc(50vw - 80px);
     height: calc(100vh - 80px);
     position: absolute;
-    top: 40px;
+    top: 6vh;
     left: 25vw;
     padding: 10px 40px;
     font-size: 6vh;
@@ -199,7 +199,7 @@ h1 {
     display: none;
 }
 
-#go, #go2, #go3, #cancel {
+#go, #go2, #go3, #cancel, #cancel-info, #cancel-logout, #logout {
     padding: 10px 20px;
     border: none;
     margin-top: 8px;
@@ -209,7 +209,7 @@ h1 {
     background: #66ffaa;
 }
 
-#cancel {
+#cancel, #cancel-info, #cancel-logout {
     background: #ff7788;
 }
 
@@ -236,18 +236,23 @@ h1 {
     font-size: 6vh;
 }
 
-#outfit-box {
+#outfit-box, #optional-box, #logout-box {
     background: #ffffff;
     width: calc(50vw - 80px);
     height: calc(90vh - 80px);
     position: absolute;
-    top: 40px;
+    top: 8vh;
     left: 25vw;
     padding: 10px 40px;
     font-size: 6vh;
     overflow-y: scroll;
     color: #000;
     display: none;
+}
+
+#logout-box{
+    height: calc(60vh - 80px);
+    top: 20vh;
 }
 
 @media screen and (orientation: landscape) {

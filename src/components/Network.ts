@@ -111,6 +111,6 @@ export class Network {
 
     changeMap(map: string, callback: Function = () => {}){
         this.socket.removeAllListeners()
-        this.socket.emit('change-map', map, callback)
+        if(map != '') this.socket.emit('change-map', map, callback)
     }
 }

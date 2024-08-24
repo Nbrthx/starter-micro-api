@@ -81,7 +81,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.playerChat = new TextBox(this.scene, 0, -20)
 
         this.step = this.scene.sound.add('step')
-        this.step.setVolume(0.4)
+        this.step.setVolume(0.3)
         this.step.setRate(2)
 
         this.playerName = this.scene.add.text(0,-13, 'other', {
@@ -143,6 +143,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     attack() {
         if(this.attacking) return
+
+        this.scene.sound.play('swing')
 
         this.weapon.visible = true;
         this.weapon.play('attack', true)

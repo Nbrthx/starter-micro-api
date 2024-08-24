@@ -98,8 +98,8 @@ io.on('connection', (socket) => {
       return
     }
 
-    // const head = ['basic', 'blue', 'green', 'brown', 'women', 'women-purple', 'women-red']
-    // const outfit = ['basic', 'blue', 'green', 'brown', 'women-purple']
+    // const head = ['-basic', '-blue', '-green', 'brown', '-women', 'women-purple', 'women-red']
+    // const outfit = ['-basic', '-blue', '-green', 'brown', 'women-purple', 'gold', 'dark', 'simply']
 
     const account = {
       username: data.username,
@@ -236,8 +236,8 @@ io.on('connection', (socket) => {
     const account = accounts.find(v => v.username == clients.get(socket.id))
     
     if(!account) return
-    if(type == 'head') account.head.push(name)
-    else if(type == 'outfit') account.outfit.push(name)
+    if(type == 'head' && !account.head.includes(name)) account.head.push(name)
+    else if(type == 'outfit' && !account.outfit.includes(name)) account.outfit.push(name)
 
     connection.query('UPDATE accounts SET outfit = \''+JSON.stringify(account.outfit)+'\', head = \''+JSON.stringify(account.head)+'\' WHERE username="'+account.username+'"', function (error, results, fields) {
       if (error) throw error;

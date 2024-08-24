@@ -55,6 +55,15 @@ export class MainMenu extends Scene
                 this.registry.set('username', username)
                 localStorage.setItem('hash', text)
                 loginBox.style.display = 'none'
+                socket.emit('get-account', (data: { xp: number }) => {
+                    if(data.xp == 0){
+                        const mainMenu =  document.getElementById('main-menu')
+                        const ui =  document.getElementById('game-ui')
+                        if(mainMenu) mainMenu.style.display = 'none'
+                        if(ui) ui.style.display = 'block'
+                        this.scene.start('Tutorial')
+                    }
+                })
             }
             else{
                 alert('Akun tidak ditemukan atau perangkat lain sudah login. Logout perangkat lain lalu refresh.')

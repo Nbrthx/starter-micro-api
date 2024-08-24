@@ -73,7 +73,7 @@ export class Outfit {
                     })
                     this.elementName.push('custom-'+i+'-outfit')
                 }
-                outfitBox.innerHTML += '<button id="cancel">Nggak Dulu</button><br />'   
+                outfitBox.innerHTML += '<br /><button id="cancel">Nggak Dulu</button><br />'   
 
                 this.eventListener.push(() => {
                     outfitBox.style.display = 'none'
@@ -89,9 +89,9 @@ export class Outfit {
         })
     }
 
-    static addOutfit(socket: Socket, type: string, name: string){
-        if(type == 'head') socket.emit('outfit-update', { type: 'head', name: name })
-        else if(type == 'outfit') socket.emit('outfit-update', { type: 'outfit', name: name })
+    addOutfit(type: string, name: string){
+        if(type == 'head' && !this.head.includes(name)) this.socket.emit('outfit-update','head', name)
+        else if(type == 'outfit' && !this.outfit.includes(name)) this.socket.emit('outfit-update', 'outfit', name)
     }
 
     removeListener(){

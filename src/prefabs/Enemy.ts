@@ -131,6 +131,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     attack(x: number, y: number) {
         if(this.enemyState == 1) return
 
+        this.scene.sound.play('swing')
+
         this.weapon.visible = true;
         this.weapon.play('attack-axe', true)
         this.weapon.rotation = Phaser.Math.Angle.Between(this.x, this.y, x, y)
