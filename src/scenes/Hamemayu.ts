@@ -178,19 +178,17 @@ export class Game extends Scene {
 
             // NPCs
             const questBox = document.getElementById("quest-box");
-
-            const questGo = document.getElementById("go") as HTMLButtonElement;
-            const questGo2 = document.getElementById("go2") as HTMLButtonElement;
-            const questGo3 = document.getElementById("go3") as HTMLButtonElement;
-            const questCancel = document.getElementById("cancel");
-
             let difficulty = 'easy'
-
             this.physics.add.overlap(
                 this.npc,
                 this.player.weaponHitbox,
                 (_obj1, _player) => {
                     this.quest.requestQuest(0, this.inventory, this.stats);
+
+                    const questGo = document.getElementById("go") as HTMLButtonElement;
+                    const questGo2 = document.getElementById("go2") as HTMLButtonElement;
+                    const questGo3 = document.getElementById("go3") as HTMLButtonElement;
+                    const questCancel = document.getElementById("cancel");
 
                     questGo.addEventListener("click", this.questGoEvent, true);
                     questGo2.addEventListener("click", this.questGoEvent, true);
@@ -204,24 +202,15 @@ export class Game extends Scene {
                 },
             );
             this.questGoEvent = (evt) => {
-                if(evt.target == questGo) difficulty = 'easy'
-                else if(evt.target == questGo2) difficulty = 'normal'
-                else if(evt.target == questGo3) difficulty = 'hard'
+                if((evt.target as HTMLButtonElement).value == 'easy') difficulty = 'easy'
+                else if((evt.target as HTMLButtonElement).value == 'normal') difficulty = 'normal'
+                else if((evt.target as HTMLButtonElement).value == 'hard') difficulty = 'hard'
                 console.log(difficulty)
-                this.physics.add.overlap(
-                    this.enterance[1],
-                    this.player,
-                    (_obj1, _player) => {
-                        this.network.changeMap("hutan");
-                        if (this.attackEvent)
-                            this.attack?.removeEventListener(
-                                "touchstart",
-                                this.attackEvent,
-                                true,
-                            );
-                        this.scene.start("Hutan", { difficulty: difficulty });
-                    },
-                );
+                this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
+                    this.network.changeMap("hutan");
+                    if (this.attackEvent) this.attack?.removeEventListener( "touchstart", this.attackEvent, true);
+                    this.scene.start("Hutan", { difficulty: difficulty });
+                });
                 if (questBox) questBox.style.display = "none";
             };
             this.questCancelEvent = () => {
