@@ -240,7 +240,7 @@ h1 {
     display: none;
 }
 
-#go, #go2, #go3, #cancel, #cancel-info, #cancel-logout, #logout, #next {
+#go, #go2, #go3, #cancel, #cancel-info, #cancel-contributor, #contributor, #next {
     padding: 10px 20px;
     border: none;
     margin-top: 8px;
@@ -250,7 +250,7 @@ h1 {
     background: #66ffaa;
 }
 
-#cancel, #cancel-info, #cancel-logout {
+#cancel, #cancel-info, #cancel-contributor {
     background: #ff7788;
 }
 
@@ -281,7 +281,7 @@ h1 {
     font-size: 6vh;
 }
 
-#outfit-box, #optional-box, #logout-box {
+#outfit-box, #optional-box, #contributor-box {
     background: #ffffff;
     width: calc(50vw - 80px);
     max-height: calc(90vh - 80px);

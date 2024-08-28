@@ -39,7 +39,7 @@ export class Game extends Scene {
     menuOutfit: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     outfit: Outfit;
     menuOptional: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
-    menuLogout: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
+    menuContributor: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
 
     constructor () {
         super('Lobby');
@@ -91,9 +91,9 @@ export class Game extends Scene {
         this.players = this.add.group()
 
         // Menu
-        this.menuOutfit = this.physics.add.sprite(coor(16), coor(8, -8), 'menu')
+        this.menuOutfit = this.physics.add.sprite(coor(18), coor(12), 'menu')
         this.menuOutfit.play('menu-idle')
-        this.add.text(this.menuOutfit.x, this.menuOutfit.y-13, 'Mas "Ganti Baju"', {
+        this.add.text(this.menuOutfit.x, this.menuOutfit.y-13, '"Ganti Baju"', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
             stroke: '#000000', strokeThickness: 1,
             align: 'center'
@@ -101,15 +101,15 @@ export class Game extends Scene {
 
         this.menuOptional = this.physics.add.sprite(coor(16), coor(10, 8), 'menu')
         this.menuOptional.play('menu-idle')
-        this.add.text(this.menuOptional.x, this.menuOptional.y-13, 'Mas "Optional Mission"', {
+        this.add.text(this.menuOptional.x, this.menuOptional.y-13, '"Optional Mission"', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
             stroke: '#000000', strokeThickness: 1,
             align: 'center'
         }).setOrigin(0.5, 0.5).setResolution(5)
 
-        this.menuLogout = this.physics.add.sprite(coor(18), coor(12), 'menu')
-        this.menuLogout.play('menu-idle')
-        this.add.text(this.menuLogout.x, this.menuLogout.y-13, 'Mas "Logout"', {
+        this.menuContributor = this.physics.add.sprite(coor(16), coor(8, 8), 'menu')
+        this.menuContributor.play('menu-idle')
+        this.add.text(this.menuContributor.x, this.menuContributor.y-13, '"Ikut Kontribusi?"', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
             stroke: '#000000', strokeThickness: 1,
             align: 'center'
@@ -221,8 +221,25 @@ export class Game extends Scene {
                     optionalBox.style.display = 'block'
                 }
             })
-            this.physics.add.overlap(this.menuLogout, this.player.weaponHitbox, (_obj1, _player) => {
-                //
+            this.physics.add.overlap(this.menuContributor, this.player.weaponHitbox, (_obj1, _player) => {
+                const contributorBox = document.getElementById('contributor-box')
+                const contributorBtn = document.getElementById('contributor')
+                const cancelBtn = document.getElementById('cancel-contributor')
+
+                if(contributorBox && cancelBtn && contributorBtn){
+                    const cancel = () => {
+                        contributorBox.style.display = 'none'
+                        cancelBtn.removeEventListener('click', cancel)
+                    }
+                    const ya = () => {
+                        location.href = 'https://docs.google.com/forms/d/e/1FAIpQLScyp0pz54Y9dPP6jvwQdsMGvkIZnIGwbltVIRhc0T6knHNBhQ/viewform'
+                        contributorBox.style.display = 'none'
+                        contributorBtn.removeEventListener('click', ya)
+                    }
+                    contributorBtn.addEventListener('click', ya)
+                    cancelBtn.addEventListener('click', cancel)
+                    contributorBox.style.display = 'block'
+                }
             })
 
             // Enterance

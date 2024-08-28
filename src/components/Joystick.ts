@@ -28,7 +28,7 @@ export class Joystick{
     }
 
     touchstart(e: TouchEvent){
-        if(e.touches.length > 1) return
+        if(e.touches.length > 1 && e.touches[0].clientX < window.innerWidth/2) return
         
         this.isDragging = true;
         this.joystick.style.left = "calc("+e.touches[0].clientX+"px - 14vh)";
@@ -56,7 +56,7 @@ export class Joystick{
     }
 
     touchend(){
-        //this.isDragging = false;
+        this.isDragging = false;
         this.stick.style.left = 'calc(50% - 6vh)';
         this.stick.style.top = 'calc(50% - 6vh)';
         this.joystick.style.left = "80px";

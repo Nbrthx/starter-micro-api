@@ -150,7 +150,7 @@ export class MainMenu extends Scene
         play.on('pointerdown', () => {
             if(mainMenu) mainMenu.style.display = 'none'
             if(ui) ui.style.display = 'block'
-            this.scene.start('Lobby');
+            this.scene.start('Lobby', { from: '' });
         });
 
         tutorial.on('pointerdown', () => {

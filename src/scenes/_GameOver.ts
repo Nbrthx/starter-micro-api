@@ -27,7 +27,7 @@ export class GameOver extends Scene
 
         this.input.once('pointerdown', () => {
 
-            this.scene.start('Lobby');
+            this.scene.start('Lobby', { from: '' });
 
         });
     }

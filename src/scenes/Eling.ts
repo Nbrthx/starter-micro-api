@@ -82,6 +82,7 @@ export class Game extends Scene {
         this.npc = this.physics.add.sprite(coor(6, 8), coor(6, 8), 'npc')
         this.npc.play('npc-idle')
         this.npc.setFlipX(true)
+        this.npc.setTint(0xff9999)
 
         // Others
         this.players = this.add.group()
