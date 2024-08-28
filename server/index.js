@@ -173,6 +173,12 @@ io.on('connection', (socket) => {
       socket.broadcast.to(map).emit('leftplayer', socket.id)
       socket.leave(map)
     })
+
+    socket.on('left', () => {
+      roomPlayers.delete(socket.id)
+      socket.broadcast.to(map).emit('leftplayer', socket.id)
+      socket.leave(map)
+    })
   })
 
   socket.on('update', (data) => {

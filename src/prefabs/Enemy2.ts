@@ -108,6 +108,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     attack(x: number, y: number) {
         if(this.enemyState == 1) return
 
+        this.scene.sound.play('shot', { volume: 0.5 })
+
         this.weapon.rotation = Phaser.Math.Angle.Between(this.x, this.y, x, y)
         let dirX = Math.cos(this.weapon.rotation)
         let dirY = Math.sin(this.weapon.rotation)

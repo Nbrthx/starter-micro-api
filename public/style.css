@@ -73,6 +73,11 @@ body {
     text-decoration: underline;
 }
 
+#username:focus {
+    position: fixed;
+    top: 2vh;
+}
+
 h1 {
     font-size: 16vh;
     font-weight: 900;
@@ -95,19 +100,54 @@ h1 {
 #popup {
     position: absolute;
     width: 100vw;
-    height: 10vh;
-    top: -10vh;
+    height: 12vh;
+    top: -12vh;
     background: #fff;
     color: #000;
-    font-size: 10vh;
-    font-weight: 900;
+    font-size: 5vh;
     text-align: center;
     transition: 0.2s;
 }
+#poppup > label {
+    font-weight: 900;
+    font-size: 10vh;
+}
 
 #ping{
-    font-size: 5vh;
+    font-size: 2.5vw;
+    left: 1vw;
+    top: 1vh;
     position: absolute;
+}
+#xp{
+    font-size: 2vw;
+    width: 8vw;
+    top: 3.5vw;
+    left: 1vw;
+    position: absolute;
+}
+#menu-btn{
+    background: #fff;
+    width: 12vw;
+    color: #000;
+    font-size: 3vw;
+    text-align: center;
+    top: 2vh;
+    left: calc(100vw - 13vw);
+    position: absolute;
+}
+
+#prompt {
+    position: absolute;
+    width: 20vw;
+    min-height: 8vh;
+    left: 7vw;
+    top: 2vh;
+    background: rgba(255, 255, 255, 0.3);
+    color: #123;
+    border-radius: 8px;
+    padding: 1vh 2vw;
+    font-size: 6vh;
 }
 
 #joystick {
@@ -188,18 +228,19 @@ h1 {
 #quest-box {
     background: #ffffff;
     width: calc(50vw - 80px);
-    height: calc(100vh - 80px);
+    max-height: calc(90vh - 80px);
     position: absolute;
-    top: 6vh;
+    top: 8vh;
     left: 25vw;
     padding: 10px 40px;
+    padding-bottom: 40px;
     font-size: 6vh;
     overflow-y: scroll;
     color: #000;
     display: none;
 }
 
-#go, #go2, #go3, #cancel, #cancel-info, #cancel-logout, #logout {
+#go, #go2, #go3, #cancel, #cancel-info, #cancel-logout, #logout, #next {
     padding: 10px 20px;
     border: none;
     margin-top: 8px;
@@ -217,10 +258,13 @@ h1 {
     background: #aaaaaa;
 }
 
+/* Chat */
+
 #chat{
     position: absolute;
-    width: 60vh;
-    left: calc(50vw - 30vh);
+    width: 36vw;
+    left: calc(50vw - 18vw);
+    top: 2vh;
     border: none;
     border-radius: 8px;
     font-family: 'Pixel', sans-serif;
@@ -229,7 +273,8 @@ h1 {
 
 #btn-send{
     position: absolute;
-    left: calc(50vw + 30vh + 4px);
+    left: calc(50vw + 18vw + 4px);
+    top: 2vh;
     border: none;
     border-radius: 8px;
     font-family: 'Pixel', sans-serif;
@@ -239,7 +284,7 @@ h1 {
 #outfit-box, #optional-box, #logout-box {
     background: #ffffff;
     width: calc(50vw - 80px);
-    height: calc(90vh - 80px);
+    max-height: calc(90vh - 80px);
     position: absolute;
     top: 8vh;
     left: 25vw;
@@ -248,11 +293,6 @@ h1 {
     overflow-y: scroll;
     color: #000;
     display: none;
-}
-
-#logout-box{
-    height: calc(60vh - 80px);
-    top: 20vh;
 }
 
 @media screen and (orientation: landscape) {

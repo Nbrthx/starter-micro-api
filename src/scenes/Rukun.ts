@@ -31,6 +31,7 @@ export class Game extends Scene {
     spawnPoint: (from: string) => { x: any; y: any; };
     from: string;
     attackEvent: () => void;
+    changeBtnEvent: () => void;
     attack: HTMLElement | null;
     npc: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     inventory: Inventory;
@@ -171,12 +172,7 @@ export class Game extends Scene {
             // NPCs
             const questBox = document.getElementById('quest-box')
             this.physics.add.overlap(this.npc, this.player.weaponHitbox, (_obj1, _player) => {
-                this.quest.requestQuest(2, this.inventory, this.stats)
-                
-                const questGo = document.getElementById('go')
-                const questCancel = document.getElementById('cancel')
-                questGo?.addEventListener('click', this.questGoEvent)
-                questCancel?.addEventListener('click', this.questCancelEvent)
+                if(!this.quest.opened) this.quest.requestQuest(2, this.inventory, this.stats, this.questGoEvent, this.questCancelEvent)
                 
                 if(questBox) questBox.style.display = 'block'
             })

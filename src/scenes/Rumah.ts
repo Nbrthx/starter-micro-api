@@ -6,7 +6,6 @@ import { Network } from '../components/Network';
 import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
 import { Trees } from '../components/Trees';
-import { Quest } from '../components/Quest';
 import { Home } from '../prefabs/Home';
 import { Enemy } from '../prefabs/Enemy3';
 import { Popup } from '../components/Popup';
@@ -35,6 +34,7 @@ export class Game extends Scene {
     spawnPoint: (from: string) => { x: any; y: any; };
     from: string;
     attackEvent: () => void;
+    changeBtnEvent: () => void;
     attack: HTMLElement | null;
     inventory: Inventory;
     enemy: Enemy;
@@ -128,6 +128,10 @@ export class Game extends Scene {
 
         // Controller
         Controller.rumah(this)
+        
+        // Prompt
+        const prompt = document.getElementById('prompt')
+        if(prompt) prompt.innerHTML = 'Ganti item ke kayu dan gunakan untuk membangun rumah'
 
         // Camera
         let tinyScale = 1
@@ -246,7 +250,7 @@ export class Game extends Scene {
     addCounter(){
         this.counter++;
         this.outfit.addOutfit('outfit', 'women-red')
-        Popup.misionComplete('Anda Berkontribusi Mewujudkan "Rukun Agawe Santoso"')
-        this.stats.addXp(1)
+        Popup.misionComplete('Anda Berkontribusi Mewujudkan "Rukun Agawe Santoso"', 'Anda mendapatkan XP <b>2x</b>')
+        this.stats.addXp(2)
     }
 }

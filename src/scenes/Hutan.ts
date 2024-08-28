@@ -31,6 +31,7 @@ export class Game extends Scene {
     network: Network;
     enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody[];
     attackEvent: () => void;
+    changeBtnEvent: () => void;
     attack: HTMLElement | null;
     enemyTrack: () => void;
     quest: Quest;
@@ -194,14 +195,15 @@ export class Game extends Scene {
             }
         })
 
-        // Quest
-
-
         // Inventory
         this.inventory = new Inventory(this.socket)
 
         // Controller
         Controller.hutan(this)
+
+        // Prompt
+        const prompt = document.getElementById('prompt')
+        if(prompt) prompt.innerHTML = 'Ganti item ke bibit pohon pada tempatnya untuk memulai menanam'
 
         // Camera
         let tinyScale = 1
@@ -237,19 +239,18 @@ export class Game extends Scene {
         this.counter++
         if(this.counter >= 60){
             if(this.enemy.active) this.enemy.destroy()
-            Popup.misionComplete('Misi "Memayu Hayuning Bawana" Selesai')
-            this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
-                if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
-                this.scene.start('Hamemayu', { from: 'hutan' })
+                this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
+            if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
+                    this.scene.start('Hamemayu', { from: 'hutan' })
             })
-
-            let reward = [1, 1]
-            if(this.difficulty == 'normal') reward = [2, 2]
-            else if(this.difficulty == 'hard') reward = [3, 3]
-
+            
+            let reward = [2, 2]
+            if(this.difficulty == 'normal') reward = [4, 4]
+            else if(this.difficulty == 'hard') reward = [6, 6]
+            
+            Popup.misionComplete('Misi "Memayu Hayuning Bawana" Selesai', 'Item yang didapat: kayu <b>'+reward[0]+'x</b>, XP <b>'+reward[1]+'x</b>')
             this.inventory.addItem('kayu', reward[0])
             this.stats.addXp(reward[1])
-            this.quest.completeQuest(0)
         }
     }
 }

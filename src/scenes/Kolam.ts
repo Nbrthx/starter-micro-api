@@ -4,9 +4,7 @@ import { Socket } from 'socket.io-client';
 import { Joystick } from '../components/Joystick';
 import { Enemy } from '../prefabs/Enemy2';
 import { Network } from '../components/Network';
-import { Hitbox } from '../prefabs/Hitbox';
-import { Quest } from '../components/Quest'
-import Plant from '../prefabs/Plant';
+import { Quest } from '../components/Quest';
 import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
 import { Bullet } from '../prefabs/Bullet';
@@ -31,6 +29,7 @@ export class Game extends Scene {
     network: Network;
     enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody[];
     attackEvent: () => void;
+    changeBtnEvent: () => void;
     attack: HTMLElement | null;
     enemyTrack: () => void;
     quest: Quest;
@@ -128,7 +127,6 @@ export class Game extends Scene {
                     this.enemy.attack(x, y)
                     setTimeout(shot, attackSpeed[1])
                 }
-                this.sound.play('shot', { volume: 0.5 })
             }
         }
         shot()
@@ -191,14 +189,15 @@ export class Game extends Scene {
             }
         })
 
-        // Quest
-
-
         // Inventory
         this.inventory = new Inventory(this.socket)
 
         // Controller
         Controller.kolam(this)
+        
+        // Prompt
+        const prompt = document.getElementById('prompt')
+        if(prompt) prompt.innerHTML = 'Ganti item ke sekop dan gunakan untuk membangun embung'
 
         // Camera
         let tinyScale = 1
@@ -235,21 +234,25 @@ export class Game extends Scene {
 
     addCounter(){
         this.counter++
+        if(this.counter == 1){
+            const prompt = document.getElementById('prompt')
+            if(prompt) prompt.innerHTML = 'Kamu juga bisa mengalahkan musuh terlebih dahulu'
+        }
         if(this.counter >= 198){
             if(this.enemy.active) this.enemy.destroy()
-            Popup.misionComplete('Misi "Eling lan Waspodo" Selesai')
             this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
                 if(this.attackEvent) this.attack?.removeEventListener('touchstart', this.attackEvent, true)
                 this.scene.start('Eling', { from: 'kolam' })
             })
-            let reward = [6, 30, 1]
-            if(this.difficulty == 'normal') reward = [12, 60, 2]
-            else if(this.difficulty == 'hard') reward = [18, 90, 3]
 
+            let reward = [12, 60, 1]
+            if(this.difficulty == 'normal') reward = [18, 90, 2]
+            else if(this.difficulty == 'hard') reward = [24, 90, 3]
+            
+            Popup.misionComplete('Misi "Eling lan Waspodo" Selesai', 'Item yang didapat: pohon <b>'+reward[0]+'x</b>, ember <b>'+reward[1]+'x</b>, XP <b>'+reward[2]+'x</b>')
             this.inventory.addItem('pohon', reward[0])
             this.inventory.addItem('ember', reward[1])
             this.stats.addXp(reward[2])
-            this.quest.completeQuest(0)
         }
     }
 }

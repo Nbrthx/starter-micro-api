@@ -3,6 +3,8 @@ import { GameOver } from './scenes/_GameOver';
 import { MainMenu } from './scenes/_MainMenu';
 import { Preloader } from './scenes/_Preloader';
 
+import { Credit } from './scenes/Credit';
+
 import { Game as Lobby } from './scenes/Lobby';
 import { Game as Hamemayu } from './scenes/Hamemayu';
 import { Game as Hutan } from './scenes/Hutan';
@@ -48,7 +50,8 @@ const config: Types.Core.GameConfig = {
         Rukun,
         Rumah,
         Tutorial,
-        GameOver
+        GameOver,
+        Credit
     ]
 };
 

@@ -20,17 +20,27 @@ export class Stats{
         this.xp = 0
         socket.emit('get-account', (data: Account) => {
             this.xp = data.xp
+
+            const xp = document.getElementById('xp')
+            const xpNow = this.xp-Math.floor(((this.getLevel()-1)/0.3)**2/11)
+            const xpNext = Math.floor((this.getLevel()/0.3)**2/11)-Math.floor(((this.getLevel()-1)/0.3)**2/11)
+            if(xp) xp.innerHTML = xpNow+'/'+xpNext+' XP'
         })
     }
 
     addXp(amount: number){
         this.xp += amount
         this.socket.emit('xp-update', amount)
+
+        const xp = document.getElementById('xp')
+        const xpNow = this.xp-Math.floor(((this.getLevel()-1)/0.3)**2/11)
+        const xpNext = Math.floor((this.getLevel()/0.3)**2/11)-Math.floor(((this.getLevel()-1)/0.3)**2/11)
+        if(xp) xp.innerHTML = xpNow+'/'+xpNext+' XP'
     }
 
     getLevel(){
         let level = 1
-        while(((level/0.3)**2)/11 < this.xp){
+        while(Math.floor((level/0.3)**2)/11 < this.xp){
             level++
         }
         return level

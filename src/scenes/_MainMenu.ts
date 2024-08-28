@@ -2,7 +2,7 @@ import { Scene, GameObjects } from 'phaser';
 import io from 'socket.io-client'
 import { getPasscolor, readPasscolor, downloadImg } from '../components/Passcolor';
 
-const socket = io('http://localhost:3000', { transports: ['websocket'] })
+const socket = io('https://3000-idx-starter-micro-api-1724574150620.cluster-mwrgkbggpvbq6tvtviraw2knqg.cloudworkstations.dev/', { transports: ['websocket'] })
 
 export class MainMenu extends Scene
 {
@@ -20,11 +20,27 @@ export class MainMenu extends Scene
         this.background = this.add.image(this.scale.width/2, this.scale.height/2, 'background');
         this.background.setScale((this.scale.width/this.scale.height)/(20/9))
 
-        this.title = this.add.text(this.scale.width/2, 600, 'P l a y', {
+        // Menu Button
+        const play = this.add.text(this.scale.width/3*2, 405, 'Play', {
             fontFamily: 'Arial Black', fontSize: 48, color: '#ffffff',
             stroke: '#000000', strokeThickness: 4,
             align: 'center'
-        }).setOrigin(0.5);
+        }).setOrigin(0);
+        const tutorial = this.add.text(this.scale.width/3*2, 475, 'Tutorial', {
+            fontFamily: 'Arial Black', fontSize: 48, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 4,
+            align: 'center'
+        }).setOrigin(0);
+        const credit = this.add.text(this.scale.width/3*2, 545, 'Credit', {
+            fontFamily: 'Arial Black', fontSize: 48, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 4,
+            align: 'center'
+        }).setOrigin(0);
+        const logout = this.add.text(this.scale.width/3*2, 615, 'Logout', {
+            fontFamily: 'Arial Black', fontSize: 48, color: '#ffffff',
+            stroke: '#000000', strokeThickness: 4,
+            align: 'center'
+        }).setOrigin(0);
 
         // Register and Login
         const loginBox = document.getElementById('login-box') as HTMLInputElement
@@ -64,6 +80,10 @@ export class MainMenu extends Scene
                         this.scene.start('Tutorial')
                     }
                 })
+                play.setInteractive()
+                tutorial.setInteractive()
+                credit.setInteractive()
+                logout.setInteractive()
             }
             else{
                 alert('Akun tidak ditemukan atau perangkat lain sudah login. Logout perangkat lain lalu refresh.')
@@ -71,7 +91,15 @@ export class MainMenu extends Scene
         }
 
         let hash = localStorage.getItem('hash') as string
-        if(hash) socket.emit('login', hash, (data: string) => loginCallback(data, hash)) 
+        if(hash){
+            if(!this.registry.has('username')) socket.emit('login', hash, (data: string) => loginCallback(data, hash))
+            else{
+                play.setInteractive()
+                tutorial.setInteractive()
+                credit.setInteractive()
+                logout.setInteractive()
+            }
+        } 
 
         file.onchange = e => readPasscolor(((e.target as HTMLInputElement).files as FileList)[0], text => {
             socket.emit('login', text, (data: string) => loginCallback(data, text))
@@ -112,17 +140,33 @@ export class MainMenu extends Scene
         login.addEventListener('click', () => file.click())
         register.addEventListener('click', () => registerHandler())
 
-        
         this.registry.set('socket', socket)
 
-        this.title.setInteractive()
-        this.title.once('pointerdown', () => {
-            const mainMenu =  document.getElementById('main-menu')
-            const ui =  document.getElementById('game-ui')
+        const mainMenu =  document.getElementById('main-menu')
+        const ui =  document.getElementById('game-ui')
+        if(mainMenu) mainMenu.style.display = 'block'
+        if(ui) ui.style.display = 'none'
+
+        play.on('pointerdown', () => {
             if(mainMenu) mainMenu.style.display = 'none'
             if(ui) ui.style.display = 'block'
             this.scene.start('Lobby');
+        });
 
+        tutorial.on('pointerdown', () => {
+            if(mainMenu) mainMenu.style.display = 'none'
+            if(ui) ui.style.display = 'block'
+            this.scene.start('Tutorial');
+
+        });
+
+        credit.on('pointerdown', () => {
+            this.scene.start('Credit');
+        });
+
+        logout.once('pointerdown', () => {
+            localStorage.removeItem('hash')
+            location.reload()
         });
         console.log('connected')
     }

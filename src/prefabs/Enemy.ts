@@ -46,7 +46,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
         this.enemyState = 0
         this.damaged = false
-        this.maxHealth = 200
+        this.maxHealth = 150
 
         this.enemyName = this.scene.add.text(0,-13, 'Penebang Liar lvl.1', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
@@ -56,12 +56,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         
         if(difficulty == 'normal'){
             this.speed = [40, 60]
-            this.maxHealth = 250
+            this.maxHealth = 200
             this.enemyName.setText('Penebang Liar lvl.2')
         }
         else if(difficulty == 'hard'){
             this.speed = [40, 70]
-            this.maxHealth = 300
+            this.maxHealth = 250
             this.enemyName.setText('Penebang Liar lvl.3')
         }
         

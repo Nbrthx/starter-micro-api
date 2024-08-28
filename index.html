@@ -5,7 +5,7 @@
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0" />
     <link rel="stylesheet" href="/style.css">
-    <title>Phaser - Template</title>
+    <title>Pitutur Impact</title>
 </head>
 
 <body >
@@ -24,7 +24,12 @@
             </div>
         </div>
         <div id="game-ui">
+            <div id='menu-btn'>Keluar Ke Menu</div>
             <label id="ping">0ms</label>
+            <label id="xp">5/10 XP</label>
+            <label id="prompt">
+                Belum ada instruksi
+            </label>
             <div class="dummy item-ember"></div>
             <div class="dummy item-kayu"></div>
             <div class="dummy item-pohon"></div>
@@ -82,6 +87,7 @@
                 <h1>Logout?</h1>
                 <button id="logout">Iyaa</button>
                 <button id="cancel-logout">Nggak Jadi</button>
+                <br /><br />
             </div>
         </div>
         <div id="request-fullscreen" onclick="document.getElementById('app').requestFullscreen();">Tap for Fullscreen</div>

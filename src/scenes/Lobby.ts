@@ -28,6 +28,7 @@ export class Game extends Scene {
     network: Network;
     enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody[];
     attackEvent: () => void;
+    changeBtnEvent: () => void;
     attack: HTMLElement | null;
     spawnPoint: (from: string) => { x: number, y: number };
     from: string;
@@ -90,7 +91,7 @@ export class Game extends Scene {
         this.players = this.add.group()
 
         // Menu
-        this.menuOutfit = this.physics.add.sprite(coor(16), coor(8), 'menu')
+        this.menuOutfit = this.physics.add.sprite(coor(16), coor(8, -8), 'menu')
         this.menuOutfit.play('menu-idle')
         this.add.text(this.menuOutfit.x, this.menuOutfit.y-13, 'Mas "Ganti Baju"', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
@@ -98,7 +99,7 @@ export class Game extends Scene {
             align: 'center'
         }).setOrigin(0.5, 0.5).setResolution(5)
 
-        this.menuOptional = this.physics.add.sprite(coor(18), coor(12), 'menu')
+        this.menuOptional = this.physics.add.sprite(coor(16), coor(10, 8), 'menu')
         this.menuOptional.play('menu-idle')
         this.add.text(this.menuOptional.x, this.menuOptional.y-13, 'Mas "Optional Mission"', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
@@ -106,7 +107,7 @@ export class Game extends Scene {
             align: 'center'
         }).setOrigin(0.5, 0.5).setResolution(5)
 
-        this.menuLogout = this.physics.add.sprite(coor(8), coor(12), 'menu')
+        this.menuLogout = this.physics.add.sprite(coor(18), coor(12), 'menu')
         this.menuLogout.play('menu-idle')
         this.add.text(this.menuLogout.x, this.menuLogout.y-13, 'Mas "Logout"', {
             fontFamily: 'Arial Black', fontSize: 4, color: '#ffffff',
@@ -221,26 +222,7 @@ export class Game extends Scene {
                 }
             })
             this.physics.add.overlap(this.menuLogout, this.player.weaponHitbox, (_obj1, _player) => {
-                const logoutBox = document.getElementById('logout-box')
-                const goBtn = document.getElementById('logout')
-                const cancelBtn = document.getElementById('cancel-logout')
-                if(logoutBox && goBtn && cancelBtn){
-                    const go = () => {
-                        logoutBox.style.display = 'none'
-                        localStorage.removeItem('hash')
-                        this.network.changeMap('')
-                        this.removeListener()
-                        location.reload()
-                        goBtn.removeEventListener('click', go)
-                    }
-                    const cancel = () => {
-                        logoutBox.style.display = 'none'
-                        cancelBtn.removeEventListener('click', cancel)
-                    }
-                    goBtn.addEventListener('click', go)
-                    cancelBtn.addEventListener('click', cancel)
-                    logoutBox.style.display = 'block'
-                }
+                //
             })
 
             // Enterance

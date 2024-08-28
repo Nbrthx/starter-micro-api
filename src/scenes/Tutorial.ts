@@ -2,7 +2,6 @@ import { Scene } from 'phaser';
 import { Player, PlayerData } from '../prefabs/Player';
 import { Socket } from 'socket.io-client';
 import { Joystick } from '../components/Joystick';
-import { Network } from '../components/Network';
 import { Inventory } from '../components/Inventory';
 import { Controller } from '../components/Controller';
 import { Trees } from '../components/Trees';
@@ -27,6 +26,7 @@ export class Game extends Scene {
     collider: any;
     enterance: Phaser.Types.Physics.Arcade.ImageWithDynamicBody[];
     attackEvent: () => void;
+    changeBtnEvent: () => void;
     attack: HTMLElement | null;
     spawnPoint: (from: string) => { x: number, y: number };
     from: string;
@@ -144,7 +144,7 @@ export class Game extends Scene {
         // Enterance
         this.physics.add.overlap(this.enterance[0], this.player, (_obj1, _player) => {
             this.removeListener()
-            this.stats.addXp(1)
+            if(this.stats.xp == 0) this.stats.addXp(1)
             this.scene.start('Lobby')
         })
 

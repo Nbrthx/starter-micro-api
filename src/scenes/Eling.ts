@@ -32,6 +32,7 @@ export class Game extends Scene {
     spawnPoint: (from: string) => { x: any; y: any; };
     from: string;
     attackEvent: () => void;
+    changeBtnEvent: () => void;
     attack: HTMLElement | null;
     npc: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
     inventory: Inventory;
@@ -171,21 +172,9 @@ export class Game extends Scene {
 
             // NPCs
             const questBox = document.getElementById('quest-box')
-            let difficulty = 'easy'
 
             this.physics.add.overlap(this.npc, this.player.weaponHitbox, (_obj1, _player) => {
-                this.quest.requestQuest(1, this.inventory, this.stats)
-                
-                const questGo = document.getElementById('go') as HTMLButtonElement
-                const questGo2 = document.getElementById('go2') as HTMLButtonElement
-                const questGo3 = document.getElementById('go3') as HTMLButtonElement
-                const questCancel = document.getElementById('cancel')
-
-                difficulty = questGo.value
-                questGo?.addEventListener('click', this.questGoEvent)
-                questGo2?.addEventListener('click', this.questGoEvent)
-                questGo3?.addEventListener('click', this.questGoEvent)
-                questCancel?.addEventListener('click', this.questCancelEvent)
+                if(!this.quest.opened) this.quest.requestQuest(1, this.inventory, this.stats, this.questGoEvent, this.questCancelEvent)
                 
                 if(questBox){
                     questBox.style.display = 'block'
@@ -196,8 +185,7 @@ export class Game extends Scene {
             let overlapEvent: Phaser.Physics.Arcade.Collider
 
             this.questGoEvent = (evt) => {
-                difficulty = (evt.target as HTMLButtonElement).value
-                console.log(difficulty)
+                let difficulty = (evt.target as HTMLButtonElement).value
                 if(overlapEvent) overlapEvent.destroy()
                 overlapEvent = this.physics.add.overlap(this.enterance[1], this.player, (_obj1, _player) => {
                     this.network.changeMap('Kolam')
