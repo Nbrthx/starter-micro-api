@@ -110,6 +110,10 @@ export class Game extends Scene {
 
         // Inventory
         this.inventory = new Inventory(this.socket)
+        
+        // Prompt
+        const prompt = document.getElementById('prompt')
+        if(prompt) prompt.innerHTML = 'Gunakan pedang untuk berinteraksi kepada NPC'
 
         // Controller
         Controller.basic(this)

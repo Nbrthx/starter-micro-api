@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png" />
+    <!-- <link rel="manifest" href="/site.webmanifest"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0" />
     <link rel="stylesheet" href="/style.css">
     <title>Pitutur Impact</title>
@@ -13,14 +16,15 @@
         <div id="main-menu">
             <div id="register-box">
                 <h1>Register</h1>
+                Buat username dan tekan tombol register untuk mendapatkan gambar unik yang bisa digunakan untuk login. <br /><br />
                 <input type="text" placeholder="username" id="username">
                 <button id="register">Register</button>
-                <p id="have-account">Sudah Punya Akun</p>
+                <p id="have-account">Sudah Punya Akun?</p>
             </div>
             <div id="login-box">
                 <h1>Login</h1>
                 <button id="login">Login</button>
-                <p id="no-account">Belum Punya Akun</p>
+                <p id="no-account">Belum Punya Akun?</p>
             </div>
         </div>
         <div id="game-ui">
@@ -93,8 +97,8 @@
                 <br /><br />
             </div>
         </div>
-        <div id="request-fullscreen" onclick="document.getElementById('app').requestFullscreen();">Tap for Fullscreen</div>
-        <div id="request-rotate">Please Rotate Yo're Phone</div>
+        <div id="request-fullscreen">Tap untuk fullscreen</div>
+        <div id="request-rotate">Mohon Rotasikan HP Anda ke Landscape Dan Hidupkan Rotasi Otomatis Bila Perlu</div>
         <div id="game-container"></div>
     </div>
     <script type="module" src="/src/main.ts"></script>

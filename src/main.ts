@@ -58,9 +58,24 @@ const config: Types.Core.GameConfig = {
 export default new Game(config);
 
 const reqfull = document.getElementById('request-fullscreen')
-if(reqfull) reqfull.style.display = "block"
-document.getElementById('app')?.addEventListener("fullscreenchange", () => {
-    if(reqfull && document.fullscreenElement){
+const app = document.getElementById('app')
+if(reqfull){
+    reqfull.style.display = "block"
+    reqfull.addEventListener('click', () => {
+        if (app && app.requestFullscreen) {
+            app.requestFullscreen();
+        } else if ((app as any).webkitRequestFullscreen) { /* Safari */
+            (app as any).webkitRequestFullscreen();
+        }
+        else {
+            alert("Browser tidak mendukung fullscreen")
+            reqfull.style.display = "none"
+        }
+    })
+}
+
+app?.addEventListener("fullscreenchange", () => {
+    if(reqfull && (document.fullscreenElement)){
         reqfull.style.display = "none"
     }
     else{

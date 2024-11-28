@@ -64,11 +64,6 @@ export class Game extends Scene {
         this.camera = this.cameras.main;
         this.socket = this.registry.get('socket')
 
-        this.backsound = this.sound.add('backsound')
-        this.backsound.setVolume(0.5)
-        this.backsound.setLoop(true)
-        if(!this.sound.get('backsound').isPlaying) this.backsound.play()
-
         // Fog
         this.fog = this.add.tileSprite(0, 4*16, this.physics.world.bounds.width, this.physics.world.bounds.height, 'fog')
         this.fog.setAlpha(0.1)

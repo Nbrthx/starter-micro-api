@@ -21,6 +21,7 @@ export class Inventory {
     current: number;
     items: Item[];
     socket: Socket;
+    loaded: boolean = false;
 
     constructor(socket: Socket){
         this.socket = socket
@@ -51,6 +52,7 @@ export class Inventory {
                 if(item) item.amount = v
             })
 
+            this.loaded = true
             const item = document.getElementById('item');
             const itemAmount = document.getElementById('item-amount');
             if(item) item.className = 'item-'+this.currentName()

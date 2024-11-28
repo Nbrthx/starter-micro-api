@@ -1,21 +1,15 @@
 const { Server } = require('socket.io')
 const sha256 = require('sha256')
-const mysql = require('mysql');
-// const { createServer } = require('http')
-// const express = require("express")
+const mysql = require('mysql2');
+const { createServer } = require('http')
+const express = require("express")
 
-// const app = express()
-// const httpServer = createServer(app)
-// var htmlPath = __dirname+'/../public';
-// app.use(express.static(htmlPath));
+const app = express()
+const httpServer = createServer(app)
+var htmlPath = __dirname+'/dist';
+app.use(express.static(htmlPath));
 
-const io = new Server({
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-    credentials: true
-  }
-})
+const io = new Server(httpServer)
 
 const rooms = new Map()
 
@@ -54,11 +48,12 @@ const items = {
 }
 
 var connection = mysql.createConnection({
-  host     : 'sql12.freesqldatabase.com',
-  user     : 'sql12727379',
-  password : '8iHptZS1sz',
-  database : 'sql12727379'
+  host     : '103.66.86.234',
+  user     : 'ngerekso',
+  password : 'Old:m0m3nt',
+  database : 'ngerekso_tutur'
 });
+
 connection.query('SELECT * FROM accounts', function (error, results, fields) {
       if (error) throw error;
       const data = results
@@ -126,15 +121,8 @@ io.on('connection', (socket) => {
     const account = accounts.find(v => v.hash == sha256(text))
     console.log(clients, account)
     if(account){
-      let hasLogin = false
-      clients.forEach(v => {
-        hasLogin = v == account.username
-      })
-      if(hasLogin) callback(false)
-      else{
         clients.set(socket.id, account.username)
         callback(account.username)
-      }
     }
     else callback(false)
   })
@@ -276,5 +264,5 @@ io.on('connection', (socket) => {
   })
 })
 
-io.listen(3000);
+httpServer.listen(3000);
 console.log(`Socket.IO server running at http://localhost:${io.httpServer.address().port}`)

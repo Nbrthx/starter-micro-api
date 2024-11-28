@@ -47,9 +47,9 @@ function getPasscolor(text256: string) {
     }
   }
   
-  function downloadImg(canv: HTMLCanvasElement) {
+  function downloadImg(canv: HTMLCanvasElement, username: string) {
     var anchor = document.createElement("a");
-    anchor.download = "passcolor";
+    anchor.download = "passcolor_"+username;
     anchor.href = canv.toDataURL("image/png");
     anchor.click()
   }

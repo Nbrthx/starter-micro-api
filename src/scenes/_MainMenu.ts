@@ -2,7 +2,7 @@ import { Scene, GameObjects } from 'phaser';
 import io from 'socket.io-client'
 import { getPasscolor, readPasscolor, downloadImg } from '../components/Passcolor';
 
-const socket = io('https://3000-idx-starter-micro-api-1724574150620.cluster-mwrgkbggpvbq6tvtviraw2knqg.cloudworkstations.dev/', { transports: ['websocket'] })
+const socket = io('https://niberthix.eu.org', { transports: ['websocket'] })
 
 export class MainMenu extends Scene
 {
@@ -16,6 +16,8 @@ export class MainMenu extends Scene
 
     create () {
         this.cameras.main.setBackgroundColor('#000000');
+        
+        this.sound.stopAll()
 
         this.background = this.add.image(this.scale.width/2, this.scale.height/2, 'background');
         this.background.setScale((this.scale.width/this.scale.height)/(20/9))
@@ -129,7 +131,7 @@ export class MainMenu extends Scene
             socket.emit('register', { hash: text, username: elmUsername.value }, (succes: boolean) => {
                 if(succes){
                     alert('Gambar yang kamu download adalah password akun kamu, simpan dengan baik. Kalau hilang, akunmu hilang :D')
-                    downloadImg(getPasscolor(text))
+                    downloadImg(getPasscolor(text), elmUsername.value)
                 }
                 else {
                     alert('Register Gagal, username sudah dipakai')
@@ -151,6 +153,11 @@ export class MainMenu extends Scene
             if(mainMenu) mainMenu.style.display = 'none'
             if(ui) ui.style.display = 'block'
             this.scene.start('Lobby', { from: '' });
+            
+            const backsound = this.sound.add('backsound')
+            backsound.setVolume(0.5)
+            backsound.setLoop(true)
+            if(!this.sound.get('backsound').isPlaying) backsound.play()
         });
 
         tutorial.on('pointerdown', () => {

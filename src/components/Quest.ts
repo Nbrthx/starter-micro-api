@@ -8,33 +8,33 @@ export class Quest {
 
   constructor() {
     this.quests = [[
-        `<h2>"Memayu Hayuning Bawana"</h2>`,
-        'Selamat datang di wilayah Giri Amerta, Kulo Raden Pramudana penjaga wilayah ini',
-        'Wilayah ini menghadapi permasalahan tanah longsor akibat perubahan iklim',
-        'Curah hujan yang tinggi dan dipicu oleh maraknya aksi penebangan pohon di hutan mengakibatkan semakin tingginya kerentanan wilayah ini terhadap bencana longsor akibat perubahan iklim',
+        `<h2>"Hamemayu Hayuning Bawana"</h2>`,
+        'Selamat datang di desa Giri Amerta, Kulo Raden Pramudana penjaga desa ini',
+        'Desa ini menghadapi permasalahan tanah longsor akibat perubahan iklim',
+        'Curah hujan yang tinggi dan dipicu oleh maraknya aksi penebangan pohon di hutan mengakibatkan semakin tingginya kerentanan desa ini terhadap bencana longsor akibat perubahan iklim',
         'Kita harus senantiasa menjaga dan melestarikan alam semesta ini agar terhindar dari bencana',
         'Maka terapkanlah pitutur luhur Hamemayu Hayuning Bawana',
         'Lakukanlah aksi konservasi dengan menanam dan merawat pohon',
         'Berhati-hatilah dengan serangan musuh penebang pohon liar',
-        'Kamu akan mendapatkan reward: <br />pohon 12x / 18x / 24x<br />ember 60x / 90x / 120x<br /><br />XP 1x / 2x / 3x<br /><br /> atas kerja kerasmu menerapkan pitutur luhur ini',
+        'Kamu akan mendapatkan reward: <br />kayu 2x / 4x / 6x<br />XP 2x / 4x / 6x<br /><br /> atas kerja kerasmu menerapkan pitutur luhur ini',
       ],
 
       [
         `<h2>"Eling Lan Waspodo"</h2>`,
-        'Selamat datang di wilayah Banyu Watu, Kulo Mbah Surakso penjaga wilayah ini',
-        'Wilayah ini menghadapi permasalahan bencana kekeringan akibat perubahan iklim',
-        'Peningkatan suhu bumi dan dipicu oleh maraknya aksi eksploitasi air tanah mengakibatkan bencana kekeringan di wilayah ini',
+        'Selamat datang di desa Banyu Watu, Kulo Mbah Surakso penjaga desa ini',
+        'Desa ini menghadapi permasalahan bencana kekeringan akibat perubahan iklim',
+        'Peningkatan suhu bumi dan dipicu oleh maraknya aksi eksploitasi air tanah mengakibatkan bencana kekeringan di desa ini',
         'Kita harus senantiasa siap siaga dan waspada dalam menghadapi kekeringan akibat perubahan iklim',
         'Maka terapkanlah pitutur luhur Eling Lan Waspodo',
         'Lakukanlah aksi konservasi dengan membangun telaga sebagai penangkap dan penampung air hujan',
         'Dan berhati-hatilah dengan serangan musuh pengeksploitasi air tanah',
-        'Kamu akan mendapatkan reward: <br />kayu 2x / 4x / 6x<br />XP 2x / 4x / 6x<br /><br /> atas kerja kerasmu menerapkan pitutur luhur ini',
+        'Kamu akan mendapatkan reward: <br />pohon 12x / 18x / 24x<br />ember 60x / 90x / 120x<br /><br />XP 1x / 2x / 3x<br /><br /> atas kerja kerasmu menerapkan pitutur luhur ini',
       ],
       
       [
         `<h2>"Rukun Agawe Santosa"</h2>`,
-        'Selamat datang di wilayah Wantirta, Kulo Ki Ageng Panjer penjaga wilayah ini',
-        'Wilayah ini baru saja dilanda banjir bandang akibat dampak perubahan iklim',
+        'Selamat datang di desa Wantirta, Kulo Ki Ageng Panjer penjaga desa ini',
+        'Desa ini baru saja dilanda banjir bandang akibat dampak perubahan iklim',
         'Banyak rumah yang hancur dan aksi penimbun bahan bangunan dan logistik dimana-mana',
         'Bangunlah kembali rumah-rumah di desa ini bersama seluruh pemain lainnya dengan semangat gotong royong',
         'Terapkanlah pitutur luhur Rukun Agawe Santosa',
@@ -105,7 +105,7 @@ export class Quest {
     }
     else{
       const cancel = '<button id="cancel">Okee</button>'
-      if(questBox) questBox.innerHTML += 'Butuh item:<br /> pohon 12x<br />ember 60x<br />untuk melaksanakan misi ini<br />'+cancel
+      if(questBox) questBox.innerHTML += 'Butuh item:<br /> pohon 12x<br />ember 60x<br />untuk melaksanakan misi ini, pergilah ke desa Banyu Watu<br />'+cancel
 
       const questCancel = document.getElementById("cancel") as HTMLButtonElement;
       questCancel.addEventListener("click", questCancelEvent, true);

@@ -14,6 +14,7 @@ export class Stats{
     socket: Socket;
     xp: number;
     level: number;
+    loaded: boolean = false;
 
     constructor(socket: Socket){
         this.socket = socket
@@ -21,6 +22,7 @@ export class Stats{
         socket.emit('get-account', (data: Account) => {
             this.xp = data.xp
 
+            this.loaded = true
             const xp = document.getElementById('xp')
             const xpNow = this.xp-Math.floor(((this.getLevel()-1)/0.3)**2/11)
             const xpNext = Math.floor((this.getLevel()/0.3)**2/11)-Math.floor(((this.getLevel()-1)/0.3)**2/11)

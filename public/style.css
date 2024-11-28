@@ -18,15 +18,16 @@ body {
 }
 
 #request-rotate{
-    width: 100vw;
+    width: 90vw;
     height: 55vh;
     display: block;
     text-align: center;
     position: absolute;
     background: #000;
     z-index: 100;
-    padding-top: 45vh;
-    font-size: 6vh;
+    padding: 5vw;
+    padding-top: 44vh;
+    font-size: 5vh;
 }
 
 #request-fullscreen{
@@ -37,7 +38,7 @@ body {
     background: #000;
     z-index: 100;
     padding-top: 45vh;
-    font-size: 6vh;
+    font-size: 10vh;
     display: none;
 }
 
@@ -63,7 +64,7 @@ body {
     background: #ffffff;
     width: calc(50vw - 60px);
     left: calc(25vw - 30px);
-    top: calc(20vh);
+    top: calc(10vh);
     position: relative;
     padding: 30px 60px;
     color: #000
@@ -73,18 +74,14 @@ body {
     text-decoration: underline;
 }
 
-#username:focus {
-    position: fixed;
-    top: 2vh;
-}
-
 h1 {
     font-size: 16vh;
     font-weight: 900;
     margin-top: 8px;
 }
 
-#register-box {
+#login-box {
+    top: calc(20vh);
     display: none;
 }
 
@@ -298,5 +295,12 @@ h1 {
 @media screen and (orientation: landscape) {
     #request-rotate{
         display: none;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    #username:focus {
+        position: fixed;
+        top: 2vh;
     }
 }
